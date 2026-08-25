@@ -876,6 +876,7 @@ footer .mono{font-family:"IBM Plex Mono",monospace;font-size:11px}
       <button class="tab" role="tab" data-s2="1" aria-selected="false">R2 Who</button>
       <button class="tab" role="tab" data-s2="2" aria-selected="false">R3 How · plan</button>
       <button class="tab" role="tab" data-s2="3" aria-selected="false">R4 How · to-be</button>
+      <button class="tab" role="tab" data-s2="4" aria-selected="false">R5 Metrics</button>
     </div>
   </div></div>
 
@@ -1065,6 +1066,66 @@ footer .mono{font-family:"IBM Plex Mono",monospace;font-size:11px}
       <div class="uchips" id="uchips"></div>
     </div></div>
 
+
+    <div class="slide" id="metrics"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">R5 · Measuring success</span>
+        <h2>One north star, four families of proof</h2>
+      </div>
+      <div class="nsrow">
+        <div class="nscard">
+          <span class="k">North Star Metric</span>
+          <h3>Governed Send Share <i>(GSS)</i></h3>
+          <p class="frm">ledgered ∧ policy-checked sends&nbsp;&nbsp;÷&nbsp;&nbsp;all customer communications</p>
+          <p class="why">The one number that can only rise if teams adopt the platform <b>voluntarily</b> and governance <b>holds</b> — adoption × trust in a single ratio. It compresses all four promises: a send counts only if it was delivered through the rails, context-checked, policy-passed, and ledgered.</p>
+          <div class="traj">
+            <span><i>wk 6</i>~15%<em>transactional path gated</em></span>
+            <span class="a">→</span>
+            <span><i>wk 12</i>40%<em>first tenants + Braze sync</em></span>
+            <span class="a">→</span>
+            <span><i>mo 12</i>85%<em>arbitration + regulatory live</em></span>
+            <span class="a">→</span>
+            <span><i>mo 18</i>~100%<em>incl. print &amp; voice</em></span>
+          </div>
+        </div>
+        <div class="gdcard">
+          <span class="k">Guardrails — GSS may never rise at their expense</span>
+          <ul>
+            <li><b>Complaint rate</b> &lt; 0.1% and falling — spam-report rate intact</li>
+            <li><b>Deliverability reputation</b> (Validity / DMARC) unchanged or better</li>
+            <li><b>p99 send-path overhead</b> &lt; 50 ms — the gate must never be why a message is late</li>
+            <li><b>Unsubscribe rate</b> stable — governed ≠ louder</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mgrid">
+        <div class="mcol"><h4 class="d1">Delivered</h4>
+          <div class="mchip"><b>Time-to-launch a new comm</b><span>6 weeks → days (lighthouse proves it)</span></div>
+          <div class="mchip"><b>Teams on the Send API</b><span>0 → 5 tenants by month 12</span></div>
+          <div class="mchip"><b>Adapter delivery SLO</b><span>≥ 99.9% per channel, paged like any prod service</span></div>
+          <div class="mchip"><b>New-product comms cost</b><span>next launch ships comms with zero new plumbing</span></div>
+        </div>
+        <div class="mcol"><h4 class="d2">Orchestrated</h4>
+          <div class="mchip"><b>Cross-tool collisions prevented</b><span>counted weekly — visibility that exists nowhere today</span></div>
+          <div class="mchip"><b>Contact-pressure violations</b><span>frequency-cap &amp; quiet-hours breaches → 0</span></div>
+          <div class="mchip"><b>Send-time context reads</b><span>% of sends decided against live CDP state</span></div>
+          <div class="mchip"><b>Lighthouse incrementality</b><span>Cashline journey lift — measured with holdouts, not asserted</span></div>
+        </div>
+        <div class="mcol"><h4 class="d3">Governed</h4>
+          <div class="mchip"><b>Pre-send policy coverage</b><span>100% of gated sends checked, zero bypass</span></div>
+          <div class="mchip"><b>Consent propagation time</b><span>change honored on every channel &lt; 15 min</span></div>
+          <div class="mchip"><b>Compliance review effort</b><span>per-campaign days → minutes (policy-as-code)</span></div>
+          <div class="mchip"><b>Exam / audit export</b><span>any regulator question answered &lt; 1 hour</span></div>
+        </div>
+        <div class="mcol"><h4 class="d4">Measured</h4>
+          <div class="mchip"><b>Canonical event coverage</b><span>% of sends with full ledger events in the warehouse</span></div>
+          <div class="mchip"><b>"What did this borrower receive?"</b><span>one query, &lt; 1 minute — today: archaeology</span></div>
+          <div class="mchip"><b>Scorecard freshness</b><span>platform metrics self-served in Looker, daily</span></div>
+          <div class="mchip"><b>Agent-send audit rate</b><span>100% of agent actions ledgered; policy exceptions = 0</span></div>
+        </div>
+      </div>
+      <p class="mfoot"><b>Reading order for execs:</b> GSS says whether the platform is winning; the guardrails say whether it deserves to; the four columns say where. Every metric above is computable from the ledger + existing BI — no new measurement stack.</p>
+    </div></div>
   </div>
 </div>
 
@@ -1405,5 +1466,37 @@ svg.omp .relaylab{fill:var(--teal);font:700 12px "IBM Plex Mono",monospace;lette
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dcard[data-tip]:hover::after{background:var(--surface2);color:var(--ink);border:1px solid var(--line2)}}
 </style>
 
+<style>
+/* R5 metrics */
+.nsrow{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:900px){.nsrow{grid-template-columns:1fr}}
+.nscard{background:var(--ink);border-radius:14px;padding:20px 24px;color:var(--bg)}
+:root[data-theme="dark"] .nscard{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nscard{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}}
+.nscard .k,.gdcard .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mint);font-weight:600}
+.nscard h3{font-family:"Archivo";font-size:26px;font-weight:800;margin:8px 0 6px}
+.nscard h3 i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--mint);font-weight:600}
+.nscard .frm{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--mint);margin:0 0 8px}
+.nscard .why{font-size:13px;opacity:.92;margin:0;max-width:70ch}
+.nscard .why b{color:var(--mint)}
+.traj{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin-top:14px}
+.traj span{display:flex;flex-direction:column;background:color-mix(in srgb,var(--mint) 14%,transparent);border:1px solid color-mix(in srgb,var(--mint) 40%,transparent);border-radius:9px;padding:7px 12px;font-family:"Archivo";font-size:17px;font-weight:800;line-height:1.2}
+.traj span i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:9px;font-weight:600;color:var(--mint);letter-spacing:.08em;text-transform:uppercase}
+.traj span em{font-style:normal;font-family:"IBM Plex Sans",sans-serif;font-size:9.5px;font-weight:400;opacity:.75}
+.traj .a{background:none;border:none;justify-content:center;color:var(--mint);font-size:15px;padding:0}
+.gdcard{background:var(--surface);border:1px dashed color-mix(in srgb,var(--amber) 55%,var(--line));border-radius:14px;padding:18px 22px}
+.gdcard .k{color:var(--amber)}
+.gdcard ul{margin:10px 0 0;padding-left:16px;font-size:12.8px;color:var(--muted)}
+.gdcard li{margin:7px 0}
+.gdcard li b{color:var(--ink)}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.mcol h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.mcol h4.d1,.mcol h4.d2,.mcol h4.d3,.mcol h4.d4{color:var(--teal)}
+.mchip{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin-bottom:8px;box-shadow:var(--shadow)}
+.mchip b{display:block;font-size:12.8px;color:var(--ink)}
+.mchip span{font-size:11.5px;color:var(--muted)}
+.mfoot{margin-top:12px;font-size:12.8px;color:var(--muted);max-width:96ch}
+.mfoot b{color:var(--ink)}
+</style>
 </body>
 </html>
