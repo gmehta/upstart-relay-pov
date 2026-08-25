@@ -1,0 +1,1409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relay · Gaurav Mehta's POV on Upstart's Communications Platform</title>
+<meta name="description" content="A point of view on Upstart's business objectives and Communications Platform vision — built entirely from public signals. Personal work by Gaurav Mehta; not affiliated with Upstart.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0yIC0xLjUgODIgNTciPjxwYXRoIGQ9Ik0xMC4zMjIgMjMuNDYwOEw0LjIzMjkxIDI5LjUzNzFDLTEuMTAxNCAzNC44NzE0IC0xLjEwMTQgNDMuNTk1NiA0LjIzMjkxIDQ4LjkxNzFWNDguOTI5OUM5LjU2NzIzIDU0LjI1MTQgMTguMjkxNSA1NC4yNTE0IDIzLjYxMyA0OC45Mjk5TDM3LjE3MjYgMzUuMzcwM1YzNS4zOTU5QzM3LjcwOTkgMzQuOTYwOSAzOC4zODc5IDM0LjcwNTEgMzkuMTI5OCAzNC43MDUxQzM5Ljg3MTggMzQuNzA1MSA0MC41NDk4IDM0Ljk2MDkgNDEuMDg3IDM1LjM5NTlINDEuMTEyNkwyOS40MzM0IDIzLjcxNjZDMjQuMTYzIDE4LjQ1OTEgMTUuNjgxOSAxOC4zNjk1IDEwLjMyMiAyMy40NjA4WiIgZmlsbD0iIzAwODA3QiIvPjxwYXRoIGQ9Ik03NC4wMjY3IDI5LjUzNzFMNDguODM5IDQuMzQ5MzZMNDguODI2MiA0LjMzNjU3QzQ4LjQ5MzYgNC4wMDM5OCA0OC4xNDgyIDMuNjk2OTYgNDcuNzkwMSAzLjQwMjc1QzQyLjQxNzQgLTAuOTg0OTUzIDM0LjQzNTEgLTAuNjY1MTUgMjkuNDMzNCA0LjMyMzc4QzI5LjM0MzggNC40MTMzMiAyOS4yNjcxIDQuNTAyODcgMjkuMTc3NSA0LjU5MjQxTDI4LjQyMjggNS4zNDcxNUwxMC4zMDkxIDIzLjQ2MDhDMTUuNjgxOCAxOC4zNjk1IDI0LjE2MyAxOC40NTkxIDI5LjQyMDYgMjMuNzI5NEw0MS4wOTk4IDM1LjQwODZMNTQuNjMzOSA0OC45Mjk5QzU5Ljk2ODIgNTQuMjY0MiA2OC42OTI0IDU0LjI2NDIgNzQuMDI2NyA0OC45Mjk5Qzc5LjM2MSA0My41OTU2IDc5LjM2MSAzNC44NzE0IDc0LjAyNjcgMjkuNTM3MVoiIGZpbGw9IiMwMEIxQUMiLz48L3N2Zz4=">
+</head>
+<body>
+<title>Relay — A Comms Platform POV for Upstart</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0yIC0xLjUgODIgNTciPjxwYXRoIGQ9Ik0xMC4zMjIgMjMuNDYwOEw0LjIzMjkxIDI5LjUzNzFDLTEuMTAxNCAzNC44NzE0IC0xLjEwMTQgNDMuNTk1NiA0LjIzMjkxIDQ4LjkxNzFWNDguOTI5OUM5LjU2NzIzIDU0LjI1MTQgMTguMjkxNSA1NC4yNTE0IDIzLjYxMyA0OC45Mjk5TDM3LjE3MjYgMzUuMzcwM1YzNS4zOTU5QzM3LjcwOTkgMzQuOTYwOSAzOC4zODc5IDM0LjcwNTEgMzkuMTI5OCAzNC43MDUxQzM5Ljg3MTggMzQuNzA1MSA0MC41NDk4IDM0Ljk2MDkgNDEuMDg3IDM1LjM5NTlINDEuMTEyNkwyOS40MzM0IDIzLjcxNjZDMjQuMTYzIDE4LjQ1OTEgMTUuNjgxOSAxOC4zNjk1IDEwLjMyMiAyMy40NjA4WiIgZmlsbD0iIzAwODA3QiIvPjxwYXRoIGQ9Ik03NC4wMjY3IDI5LjUzNzFMNDguODM5IDQuMzQ5MzZMNDguODI2MiA0LjMzNjU3QzQ4LjQ5MzYgNC4wMDM5OCA0OC4xNDgyIDMuNjk2OTYgNDcuNzkwMSAzLjQwMjc1QzQyLjQxNzQgLTAuOTg0OTUzIDM0LjQzNTEgLTAuNjY1MTUgMjkuNDMzNCA0LjMyMzc4QzI5LjM0MzggNC40MTMzMiAyOS4yNjcxIDQuNTAyODcgMjkuMTc3NSA0LjU5MjQxTDI4LjQyMjggNS4zNDcxNUwxMC4zMDkxIDIzLjQ2MDhDMTUuNjgxOCAxOC4zNjk1IDI0LjE2MyAxOC40NTkxIDI5LjQyMDYgMjMuNzI5NEw0MS4wOTk4IDM1LjQwODZMNTQuNjMzOSA0OC45Mjk5QzU5Ljk2ODIgNTQuMjY0MiA2OC42OTI0IDU0LjI2NDIgNzQuMDI2NyA0OC45Mjk5Qzc5LjM2MSA0My41OTU2IDc5LjM2MSAzNC44NzE0IDc0LjAyNjcgMjkuNTM3MVoiIGZpbGw9IiMwMEIxQUMiLz48L3N2Zz4=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* ---- Part I styles (tokens defined in Part II block apply document-wide) ---- */
+.partlabel{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* watermark */
+.wm{position:fixed;right:12px;bottom:8px;z-index:95;pointer-events:none;font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.05em;color:var(--muted);background:color-mix(in srgb,var(--surface) 78%,transparent);border:1px solid var(--line);border-radius:999px;padding:3px 10px;opacity:.85}
+
+/* part 0 */
+.p0{justify-content:space-between}
+.p0main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:0}
+.p0lock{display:flex;align-items:center;gap:16px;margin-bottom:34px}
+.p0lock .uplogo svg{height:40px}
+.p0lock .sep{width:1.5px;height:34px;background:var(--line2)}
+.p0lock .rbig{font-family:"Manrope","Archivo",sans-serif;font-weight:700;font-size:42px;letter-spacing:-.02em;color:var(--ink);line-height:1}
+.p0lock .rbig i{font-style:normal;color:var(--teal)}
+.p0 h1{font-size:clamp(24px,3.6vw,40px);font-weight:800;max-width:22em;letter-spacing:-.015em}
+.p0by{margin-top:16px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted)}
+.p0by b{color:var(--ink);font-weight:600}
+.p0cards{display:flex;gap:16px;margin-top:40px;flex-wrap:wrap;justify-content:center}
+.p0card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 24px;box-shadow:var(--shadow);text-align:left;min-width:300px;transition:border-color .15s,transform .15s}
+.p0card:hover{border-color:var(--teal);transform:translateY(-2px)}
+.p0card .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.p0card h3{font-size:17px;margin:6px 0 10px}
+.p0card .chps{display:flex;gap:5px;flex-wrap:wrap}
+.p0card .chps span{font-family:"IBM Plex Mono",monospace;font-size:9.5px;padding:3px 8px;border-radius:5px;background:var(--surface2);border:1px solid var(--line);color:var(--muted)}
+.p0card .go{display:block;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--teal);font-weight:600}
+
+/* deck view */
+.deckview{height:100svh;min-height:560px;display:flex;flex-direction:column;background:var(--bg)}
+.uplogo{display:block;line-height:0}
+.uplogo svg{height:25px;width:auto;display:block}
+.uplogo svg path[fill="#222929"]{fill:var(--ink)}
+.deckhead{border-bottom:1px solid var(--line);background:var(--bg)}
+.deckhead .row{max-width:1060px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.deckhead h1{font-family:"Archivo";font-size:17px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.deckhead h1 .thin{color:var(--muted);font-weight:600}
+.deckhead .plab{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600;white-space:nowrap}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 12px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--teal);border-color:var(--teal);color:var(--chip-ink)}
+.stage{flex:1;position:relative;overflow:hidden}
+.sidearr{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:52px;height:52px;border-radius:50%;border:1px solid var(--line2);background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(4px);color:var(--ink);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:background .15s ease,color .15s ease}
+.sidearr:hover:not(:disabled){background:var(--teal);border-color:var(--teal);color:var(--chip-ink)}
+.sidearr.left{left:14px}
+.sidearr.right{right:14px}
+.sidearr:disabled{opacity:.25;cursor:default}
+@media(max-width:860px){.sidearr{width:40px;height:40px;font-size:19px}.sidearr.left{left:6px}.sidearr.right{right:6px}}
+.slide{position:absolute;inset:0;overflow-y:auto;display:none;padding:18px 0 14px}
+.slide.active{display:block}
+@media (prefers-reduced-motion: no-preference){.slide.active{animation:slidein .25s ease}}
+@keyframes slidein{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+.slide .sec-head{margin-bottom:14px}
+.slide .sec-head h2{font-size:clamp(19px,2.4vw,24px);font-weight:700;margin-top:4px}
+
+/* jump band (Part II gateway) */
+.jumpband{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;border:none;text-align:center;cursor:pointer;background:var(--ink);padding:14px 24px}
+.jumpband .partlabel{font-size:12.5px}
+:root[data-theme="dark"] .jumpband{background:var(--surface2);border-top:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .jumpband{background:var(--surface2);border-top:1px solid var(--line)}}
+.jumpband .partlabel{color:var(--mint)}
+.jumpband p{font-family:"Archivo","IBM Plex Sans",sans-serif;font-size:clamp(13.5px,1.6vw,16px);font-weight:600;color:var(--bg);max-width:62em;margin:6px auto 0;line-height:1.45}
+:root[data-theme="dark"] .jumpband p{color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .jumpband p{color:var(--ink)}}
+.jumpband .arr{font-size:16px;color:var(--mint);transition:transform .2s ease}
+.jumpband:hover .arr{transform:translateY(3px)}
+
+/* B1 */
+.missionbar{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 20px;box-shadow:var(--shadow);margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px 26px;align-items:baseline}
+.missionbar .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.missionbar p{margin:0;font-size:14.5px}
+.missionbar p b{color:var(--teal-deep)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;box-shadow:var(--shadow)}
+.kpi .v{font-family:"Archivo";font-size:21px;font-weight:800;color:var(--teal-deep);line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .l{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:4px}
+.kpi .d{font-size:11px;color:var(--muted);margin-top:2px}
+.kpi .d b{color:var(--teal);font-weight:600}
+.kpi .d b.warn{color:var(--amber)}
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.swot{grid-template-columns:1fr}}
+.swcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow)}
+.swcard .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.swcard.s .k{color:var(--teal)} .swcard.w .k{color:var(--amber)}
+.swcard.o .k{color:var(--mint)} .swcard.t .k{color:var(--graphite)}
+.swcard ul{margin:8px 0 0;padding-left:16px;font-size:12.8px;color:var(--muted)}
+.swcard li{margin:4px 0}
+.swcard li b{color:var(--ink);font-weight:600}
+
+/* B2 */
+.pmwrap{overflow-x:auto;border-radius:12px}
+table.pm{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:12.8px}
+table.pm th{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:600;white-space:nowrap}
+table.pm td{padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.pm tr:last-child td{border-bottom:none}
+table.pm td.prod{font-weight:600;white-space:nowrap}
+table.pm td.prod .sub{display:block;font-weight:400;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted)}
+.prodstrip{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 12px}
+.prodstrip .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:6px}
+.pchip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:7px;border:1px solid var(--line2);background:var(--surface);color:var(--ink)}
+.pchip i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);font-weight:400}
+.mo{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:5px;margin:1px 2px 1px 0;background:color-mix(in srgb,var(--teal) 12%,var(--surface));color:var(--teal-deep);white-space:nowrap}
+.mo.lead{background:var(--teal);color:var(--chip-ink)}
+.pmfoot{margin-top:12px;font-size:12.8px;color:var(--muted);max-width:86ch}
+.pmfoot b{color:var(--ink)}
+
+/* sankey */
+:root{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#4a3aa7}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9}}
+:root[data-theme="dark"]{--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9}
+.skwrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:14px 16px 8px;overflow-x:auto}
+.skwrap svg{display:block;min-width:820px;width:100%;height:auto;margin:0 auto}
+.skbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin-bottom:12px}
+.skbar label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.skbar select{font:600 13px "IBM Plex Sans",sans-serif;color:var(--ink);background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:7px 12px;cursor:pointer}
+.skstat{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.skstat b{color:var(--teal);font-weight:600;font-size:13px}
+.sk-ribbon{fill-opacity:.42;transition:fill-opacity .15s ease}
+.sk-ribbon.m1{fill:var(--s1)} .sk-ribbon.m2{fill:var(--s2)} .sk-ribbon.m3{fill:var(--s3)} .sk-ribbon.m4{fill:var(--s4)} .sk-ribbon.m5{fill:var(--s5)} .sk-ribbon.m6{fill:var(--s6)} .sk-ribbon.m7{fill:var(--s7)}
+.sk-node rect{fill:var(--graphite)}
+.sk-node.mn.m1 rect{fill:var(--s1)} .sk-node.mn.m2 rect{fill:var(--s2)} .sk-node.mn.m3 rect{fill:var(--s3)} .sk-node.mn.m4 rect{fill:var(--s4)} .sk-node.mn.m5 rect{fill:var(--s5)} .sk-node.mn.m6 rect{fill:var(--s6)} .sk-node.mn.m7 rect{fill:var(--s7)}
+.lensbtn{font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:7px 13px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);color:var(--muted);cursor:pointer}
+.lensbtn[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--chip-ink)}
+.sk-node text{fill:var(--ink);font-family:"IBM Plex Sans",sans-serif;font-size:12px;font-weight:600}
+.sk-node text .sv{fill:var(--muted);font-weight:400;font-family:"IBM Plex Mono",monospace;font-size:10px}
+svg.sk.hovering .sk-ribbon{fill-opacity:.08}
+svg.sk.hovering .sk-ribbon.hl{fill-opacity:.78}
+.sk-node{cursor:default}
+.sklegend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:8px 2px 2px;font-size:12px;color:var(--muted)}
+.sklegend .sw{display:inline-block;width:11px;height:11px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.sktable{margin-top:10px;font-size:12.5px;color:var(--muted)}
+.sktable summary{cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--teal)}
+.sktable table{border-collapse:collapse;margin-top:8px}
+.sktable td,.sktable th{border:1px solid var(--line);padding:4px 10px;text-align:left;font-size:12px}
+
+/* B3 */
+.chgrid{display:grid;gap:9px}
+.chrow{display:grid;grid-template-columns:40px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;align-items:start}
+.chrow .n{font-family:"Archivo";font-size:19px;font-weight:800;color:var(--amber);line-height:1.2}
+.chrow h3{font-size:14px;margin-bottom:2px}
+.chrow p{font-size:12.6px;color:var(--muted);margin:0}
+.chrow p b{color:var(--ink);font-weight:600}
+.chrow .src{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);letter-spacing:.05em}
+.chrow .imp{display:block;margin-top:5px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.04em;color:var(--teal);font-weight:600}
+
+/* B4 */
+.stackwrap{display:grid;grid-template-columns:1fr 250px;gap:14px;align-items:start}
+@media(max-width:920px){.stackwrap{grid-template-columns:1fr}}
+.spine{display:flex;flex-direction:column-reverse}
+.slayer{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 16px 11px;box-shadow:var(--shadow)}
+.slayer .lt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.slayer.star{border-color:var(--teal);border-width:2px}
+.slayer.star .lt{color:var(--teal)}
+.slayer.cust{background:var(--ink);border-color:var(--ink)}
+.slayer.cust .lt{color:var(--mint)}
+.slayer.cust .tchips span{color:var(--bg)}
+:root[data-theme="dark"] .slayer.cust{background:var(--surface2);border-color:var(--line2)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .slayer.cust{background:var(--surface2);border-color:var(--line2)}}
+.tchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.tc{font-size:11.5px;font-weight:500;padding:3px 9px;border-radius:7px;border:1.5px solid;white-space:nowrap}
+.tc.conf{background:color-mix(in srgb,var(--teal) 9%,var(--surface));border-color:color-mix(in srgb,var(--teal) 45%,var(--line));color:var(--ink);border-style:solid}
+.tc.inf{background:var(--amber-soft);border-color:color-mix(in srgb,var(--amber) 45%,var(--line));color:var(--ink);border-style:dashed}
+.tc.spec{background:none;border-color:var(--line2);color:var(--muted);border-style:dotted}
+.tc.own{background:color-mix(in srgb,var(--mint) 14%,var(--surface));border-color:var(--teal);color:var(--teal-deep);border-style:solid;border-width:2px;font-weight:600}
+.tc.plain{border:none;background:none;color:var(--bg);padding:3px 2px}
+.sgap{display:flex;justify-content:center;padding:1px 0;color:var(--teal);font-size:11px;line-height:1}
+.rails{display:flex;flex-direction:column;gap:10px}
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow)}
+.rail .lt{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.rail.gov .lt{color:var(--amber)}
+.rail.bi .lt{color:var(--teal)}
+.stacklegend{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:11.5px;color:var(--muted)}
+.stacklegend .tc{font-size:10.5px;padding:2px 8px}
+.stacknote{margin-top:8px;font-size:12.3px;color:var(--muted);max-width:92ch}
+.stacknote b{color:var(--ink)}
+
+/* OMP-style architecture */
+:root{--gaprd:#B3382F}
+:root[data-theme="dark"]{--gaprd:#E57373}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--gaprd:#E57373}}
+#stack .wrap{max-width:1560px}
+.ompwrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:12px;overflow-x:auto}
+.ompwrap svg{display:block;min-width:1460px;width:100%;height:auto}
+svg.omp .oz{stroke-width:1.3;rx:10}
+svg.omp .ozlab{font:600 11px "IBM Plex Mono",monospace;letter-spacing:.08em}
+svg.omp .on rect{fill:var(--surface)}
+svg.omp .on.conf rect{stroke:color-mix(in srgb,var(--teal) 55%,var(--line));stroke-width:1.4}
+svg.omp .on.inf rect{stroke:color-mix(in srgb,var(--amber) 60%,var(--line));stroke-width:1.4;stroke-dasharray:6 4}
+svg.omp .on.own rect{stroke:var(--teal);stroke-width:2.4;fill:color-mix(in srgb,var(--mint) 12%,var(--surface))}
+svg.omp .on.gap rect{stroke:var(--gaprd);stroke-width:1.6;stroke-dasharray:5 4;fill:color-mix(in srgb,var(--gaprd) 7%,var(--surface))}
+svg.omp .on.team rect{stroke:var(--graphite);stroke-width:1.3;rx:22}
+svg.omp .on .t{font:600 11.5px "IBM Plex Sans",sans-serif;fill:var(--ink)}
+svg.omp .on.gap .t{fill:var(--gaprd)}
+svg.omp .on .s{font:400 9.5px "IBM Plex Sans",sans-serif;fill:var(--muted)}
+svg.omp .ar{fill:none;stroke:var(--muted);stroke-width:1.4}
+svg.omp .ar.batch{stroke-dasharray:7 5}
+svg.omp .ar.manual{stroke-dasharray:1.5 4;stroke-linecap:round}
+svg.omp .ar.consent{stroke:var(--amber);stroke-dasharray:7 5}
+svg.omp .arlab{font:500 9.5px "IBM Plex Mono",monospace;fill:var(--muted);paint-order:stroke;stroke:var(--surface);stroke-width:3px}
+svg.omp .arlab.consent{fill:var(--amber)}
+svg.omp marker path{fill:var(--muted)}
+svg.omp marker.mkc path{fill:var(--amber)}
+.ompbacklog{margin-top:12px;background:color-mix(in srgb,var(--gaprd) 6%,var(--surface));border:1px dashed color-mix(in srgb,var(--gaprd) 45%,var(--line));border-radius:12px;padding:14px 18px;font-size:12.8px;color:var(--muted)}
+.ompbacklog b{color:var(--gaprd);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+.ompbacklog span b2{color:var(--ink)}
+</style>
+
+<div class="wm">personal POV · Gaurav Mehta · not affiliated with Upstart</div>
+
+<div class="deckview p0" id="part0">
+  <div class="p0main">
+    <div class="p0lock"><span class="uplogo" role="img" aria-label="Upstart"><svg viewBox="0 0 353 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M139.164 29.8697C139.164 45.4249 130.389 53.2409 116.765 53.2409C103.218 53.2409 94.5965 45.4249 94.5965 30.3174V0.332642H103.743V29.9464C103.743 39.6173 108.732 44.8236 116.919 44.8236C125.029 44.8236 130.018 39.9115 130.018 30.3174V0.332642H139.164V29.8697Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M156.37 46.3203C159.12 49.9661 163.213 53.2409 169.686 53.2409C179.063 53.2409 187.992 45.8726 187.992 32.7735C187.992 19.6743 178.986 12.3061 169.686 12.3061C163.367 12.3061 159.273 15.5809 156.37 19.6743V13.1248H147.364V64.3316H156.37V46.3203ZM156.139 32.7735C156.139 25.111 161.499 20.1221 167.601 20.1221C173.703 20.1221 178.833 25.0342 178.833 32.7735C178.833 40.5895 173.78 45.4249 167.601 45.4249C161.499 45.4249 156.139 40.436 156.139 32.7735Z" fill="#222929"/>
+    <path d="M209.073 53.1641C203.496 53.1641 197.317 51.1557 192.405 47.2925L196.422 41.1907C200.669 44.3887 205.274 46.0261 209.291 46.0261C213.167 46.0261 215.393 44.3887 215.393 41.7791V41.6256C215.393 38.5811 211.222 37.5321 206.617 36.125C200.81 34.4876 194.337 32.1083 194.337 24.5865V24.433C194.337 16.988 200.515 12.4596 208.319 12.4596C213.231 12.4596 218.591 14.1737 222.748 16.924L219.179 23.3201C215.393 21.0175 211.363 19.5976 208.088 19.5976C204.596 19.5976 202.588 21.235 202.588 23.5375V23.6911C202.588 26.5181 206.835 27.7078 211.44 29.1917C217.171 30.9826 223.643 33.5794 223.643 40.6534V40.8069C223.656 49.0706 217.26 53.1641 209.073 53.1641Z" fill="#222929"/>
+    <path d="M241.821 40.1417C241.821 43.634 243.612 45.0539 246.656 45.0539C248.665 45.0539 250.456 44.6062 252.234 43.7107V51.079C249.995 52.3454 247.475 53.0874 244.124 53.0874C237.497 53.0874 232.815 50.1836 232.815 41.5489V20.864H227.826V13.1248H232.815V2.341H241.821V13.1248H252.387V20.864H241.821V40.1417Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M284.598 47.5867V52.4222H293.54V29.1277C293.54 18.6382 287.886 12.5363 276.27 12.5363C269.874 12.5363 265.627 13.8795 261.316 15.8111L263.772 23.0259C267.341 21.542 270.616 20.5698 275.004 20.5698C281.246 20.5698 284.675 23.5375 284.675 28.9742V29.9464C281.63 28.9742 278.573 28.309 273.814 28.309C264.655 28.309 257.888 32.4792 257.888 40.9604V41.1139C257.888 48.9939 264.425 53.2409 271.87 53.2409C277.831 53.2409 281.924 50.7848 284.598 47.5867ZM275.823 34.1934C279.328 34.1934 282.526 34.8586 284.828 35.754H284.815V38.2101C284.815 43.1223 280.351 46.4738 274.403 46.4738C270.168 46.4738 266.817 44.3887 266.817 40.6662V40.5127C266.817 36.496 270.168 34.1934 275.823 34.1934Z" fill="#222929"/>
+    <path d="M309.172 52.4222H300.166V13.1248H309.172V21.9769C311.628 16.0925 316.169 12.0758 323.089 12.3828V21.913H322.565C314.672 21.913 309.172 27.0426 309.172 37.4682V52.4222Z" fill="#222929"/>
+    <path d="M342.29 40.1417C342.29 43.634 344.081 45.0539 347.126 45.0539C349.134 45.0539 350.925 44.6062 352.703 43.7107V51.079C350.465 52.3454 347.945 53.0874 344.593 53.0874C337.967 53.0874 333.285 50.1836 333.285 41.5489V20.864H328.296V13.1248H333.285V2.341H342.29V13.1248H352.857V20.864H342.29V40.1417Z" fill="#222929"/>
+    <path d="M10.322 23.4608L4.23291 29.5371C-1.1014 34.8714 -1.1014 43.5956 4.23291 48.9171V48.9299C9.56723 54.2514 18.2915 54.2514 23.613 48.9299L37.1726 35.3703V35.3959C37.7099 34.9609 38.3879 34.7051 39.1298 34.7051C39.8718 34.7051 40.5498 34.9609 41.087 35.3959H41.1126L29.4334 23.7166C24.163 18.4591 15.6819 18.3695 10.322 23.4608Z" fill="#00807B"/>
+    <path d="M74.0267 29.5371L48.839 4.34936L48.8262 4.33657C48.4936 4.00398 48.1482 3.69696 47.7901 3.40275C42.4174 -0.984953 34.4351 -0.66515 29.4334 4.32378C29.3438 4.41332 29.2671 4.50287 29.1775 4.59241L28.4228 5.34715L10.3091 23.4608C15.6818 18.3695 24.163 18.4591 29.4206 23.7294L41.0998 35.4086L54.6339 48.9299C59.9682 54.2642 68.6924 54.2642 74.0267 48.9299C79.361 43.5956 79.361 34.8714 74.0267 29.5371Z" fill="#00B1AC"/>
+</svg></span><span class="sep"></span><span class="rbig">Relay<i>.</i></span></div>
+    <h1>A point of view on Upstart's business objectives and its Communications Platform vision</h1>
+    <p class="p0by"><b>Gaurav Mehta</b> · built entirely from public signals — 10-K, hiring pages, stack recon · August 2026 · a concept for discussion, not a spec</p>
+    <div class="p0cards">
+      <button class="p0card" id="p0-c1">
+        <span class="k">Part I</span>
+        <h3>The Business</h3>
+        <div class="chps"><span>B1 Mission &amp; Position</span><span>B2 Communications motions</span><span>B3 Challenges</span><span>B4 Stack recon</span></div>
+        <span class="go">read the business context ↓</span>
+      </button>
+      <button class="p0card" id="p0-c2">
+        <span class="k">Part II</span>
+        <h3>Relay — The Comms Platform</h3>
+        <div class="chps"><span>R1 Why</span><span>R2 Who</span><span>R3 How · plan</span><span>R4 How · to-be</span></div>
+        <span class="go">jump to the platform POV ↓</span>
+      </button>
+    </div>
+  </div>
+  <button class="jumpband" id="p0-jump" aria-label="Continue to Part I">
+    <span class="partlabel">Part I · The Business</span>
+    <span class="arr">▼</span>
+  </button>
+</div>
+
+<div class="deckview" id="business">
+  <div class="deckhead"><div class="row">
+    <span class="uplogo" role="img" aria-label="Upstart"><svg viewBox="0 0 353 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M139.164 29.8697C139.164 45.4249 130.389 53.2409 116.765 53.2409C103.218 53.2409 94.5965 45.4249 94.5965 30.3174V0.332642H103.743V29.9464C103.743 39.6173 108.732 44.8236 116.919 44.8236C125.029 44.8236 130.018 39.9115 130.018 30.3174V0.332642H139.164V29.8697Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M156.37 46.3203C159.12 49.9661 163.213 53.2409 169.686 53.2409C179.063 53.2409 187.992 45.8726 187.992 32.7735C187.992 19.6743 178.986 12.3061 169.686 12.3061C163.367 12.3061 159.273 15.5809 156.37 19.6743V13.1248H147.364V64.3316H156.37V46.3203ZM156.139 32.7735C156.139 25.111 161.499 20.1221 167.601 20.1221C173.703 20.1221 178.833 25.0342 178.833 32.7735C178.833 40.5895 173.78 45.4249 167.601 45.4249C161.499 45.4249 156.139 40.436 156.139 32.7735Z" fill="#222929"/>
+    <path d="M209.073 53.1641C203.496 53.1641 197.317 51.1557 192.405 47.2925L196.422 41.1907C200.669 44.3887 205.274 46.0261 209.291 46.0261C213.167 46.0261 215.393 44.3887 215.393 41.7791V41.6256C215.393 38.5811 211.222 37.5321 206.617 36.125C200.81 34.4876 194.337 32.1083 194.337 24.5865V24.433C194.337 16.988 200.515 12.4596 208.319 12.4596C213.231 12.4596 218.591 14.1737 222.748 16.924L219.179 23.3201C215.393 21.0175 211.363 19.5976 208.088 19.5976C204.596 19.5976 202.588 21.235 202.588 23.5375V23.6911C202.588 26.5181 206.835 27.7078 211.44 29.1917C217.171 30.9826 223.643 33.5794 223.643 40.6534V40.8069C223.656 49.0706 217.26 53.1641 209.073 53.1641Z" fill="#222929"/>
+    <path d="M241.821 40.1417C241.821 43.634 243.612 45.0539 246.656 45.0539C248.665 45.0539 250.456 44.6062 252.234 43.7107V51.079C249.995 52.3454 247.475 53.0874 244.124 53.0874C237.497 53.0874 232.815 50.1836 232.815 41.5489V20.864H227.826V13.1248H232.815V2.341H241.821V13.1248H252.387V20.864H241.821V40.1417Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M284.598 47.5867V52.4222H293.54V29.1277C293.54 18.6382 287.886 12.5363 276.27 12.5363C269.874 12.5363 265.627 13.8795 261.316 15.8111L263.772 23.0259C267.341 21.542 270.616 20.5698 275.004 20.5698C281.246 20.5698 284.675 23.5375 284.675 28.9742V29.9464C281.63 28.9742 278.573 28.309 273.814 28.309C264.655 28.309 257.888 32.4792 257.888 40.9604V41.1139C257.888 48.9939 264.425 53.2409 271.87 53.2409C277.831 53.2409 281.924 50.7848 284.598 47.5867ZM275.823 34.1934C279.328 34.1934 282.526 34.8586 284.828 35.754H284.815V38.2101C284.815 43.1223 280.351 46.4738 274.403 46.4738C270.168 46.4738 266.817 44.3887 266.817 40.6662V40.5127C266.817 36.496 270.168 34.1934 275.823 34.1934Z" fill="#222929"/>
+    <path d="M309.172 52.4222H300.166V13.1248H309.172V21.9769C311.628 16.0925 316.169 12.0758 323.089 12.3828V21.913H322.565C314.672 21.913 309.172 27.0426 309.172 37.4682V52.4222Z" fill="#222929"/>
+    <path d="M342.29 40.1417C342.29 43.634 344.081 45.0539 347.126 45.0539C349.134 45.0539 350.925 44.6062 352.703 43.7107V51.079C350.465 52.3454 347.945 53.0874 344.593 53.0874C337.967 53.0874 333.285 50.1836 333.285 41.5489V20.864H328.296V13.1248H333.285V2.341H342.29V13.1248H352.857V20.864H342.29V40.1417Z" fill="#222929"/>
+    <path d="M10.322 23.4608L4.23291 29.5371C-1.1014 34.8714 -1.1014 43.5956 4.23291 48.9171V48.9299C9.56723 54.2514 18.2915 54.2514 23.613 48.9299L37.1726 35.3703V35.3959C37.7099 34.9609 38.3879 34.7051 39.1298 34.7051C39.8718 34.7051 40.5498 34.9609 41.087 35.3959H41.1126L29.4334 23.7166C24.163 18.4591 15.6819 18.3695 10.322 23.4608Z" fill="#00807B"/>
+    <path d="M74.0267 29.5371L48.839 4.34936L48.8262 4.33657C48.4936 4.00398 48.1482 3.69696 47.7901 3.40275C42.4174 -0.984953 34.4351 -0.66515 29.4334 4.32378C29.3438 4.41332 29.2671 4.50287 29.1775 4.59241L28.4228 5.34715L10.3091 23.4608C15.6818 18.3695 24.163 18.4591 29.4206 23.7294L41.0998 35.4086L54.6339 48.9299C59.9682 54.2642 68.6924 54.2642 74.0267 48.9299C79.361 43.5956 79.361 34.8714 74.0267 29.5371Z" fill="#00B1AC"/>
+</svg></span>
+    <div class="tabs" role="tablist" aria-label="Business sections">
+      <button class="tab" role="tab" data-slide="0" aria-selected="true">B1 Mission &amp; Position</button>
+      <button class="tab" role="tab" data-slide="1" aria-selected="false">B2 Communications motions</button>
+      <button class="tab" role="tab" data-slide="2" aria-selected="false">B3 Challenges</button>
+      <button class="tab" role="tab" data-slide="3" aria-selected="false">B4 Stack recon</button>
+    </div>
+  </div></div>
+
+  <div class="stage">
+    <button class="sidearr left" id="sl-prev" aria-label="Previous section">‹</button>
+    <button class="sidearr right" id="sl-next" aria-label="Next section">›</button>
+
+    <div class="slide active" id="swot"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">B1 · The company</span>
+        <h2>Mission &amp; Position</h2>
+      </div>
+      <div class="missionbar"><span class="k">Mission</span><p>Radically reduce the cost and complexity of borrowing — <b>proprietary AI remaking the entire lending process</b>. 91% of loans fully automated · 100+ lending partners · marketplace + growing balance sheet (~10% of originations).</p></div>
+      <div class="kpis">
+        <div class="kpi"><div class="v">$1.0B</div><div class="l">Revenue · FY2025</div><div class="d"><b>+64%</b> YoY</div></div>
+        <div class="kpi"><div class="v">$11.0B</div><div class="l">Originations · FY2025</div><div class="d"><b>+86%</b> YoY · 1.5M loans</div></div>
+        <div class="kpi"><div class="v">19.4%</div><div class="l">Conversion on rate requests</div><div class="d"><b>▲</b> from 15.1% in 2024</div></div>
+        <div class="kpi"><div class="v">56%</div><div class="l">Contribution margin</div><div class="d"><b class="warn">▼</b> from 60% — acquisition costs rising with growth</div></div>
+        <div class="kpi"><div class="v">$230M</div><div class="l">Adj. EBITDA · 22% margin</div><div class="d"><b>+</b> from $10.6M in 2024</div></div>
+      </div>
+      <div class="swot">
+        <div class="swcard s"><span class="k">Strength</span><ul>
+          <li><b>Model moat:</b> AI underwriting that prices risk incumbents can't; 91% full automation</li>
+          <li><b>Two-sided network:</b> 100+ banks &amp; credit unions fund without Upstart's balance sheet</li>
+          <li><b>Category brand</b> in AI personal lending</li>
+        </ul></div>
+        <div class="swcard w"><span class="k">Weakness</span><ul>
+          <li><b>Concentration:</b> top-3 lending partners ≈ 61% of revenue (FY2025)</li>
+          <li><b>Rented distribution:</b> aggregators (Credit Karma) + direct mail carry prospecting</li>
+          <li><b>Macro-coupled funnel:</b> approvals move with rates; demand whiplash</li>
+        </ul></div>
+        <div class="swcard o"><span class="k">Opportunity</span><ul>
+          <li><b>Cross-sell the base:</b> 5 products, one borrower graph — cheapest growth available</li>
+          <li><b>Bank charter path</b> (Upstart Bank): own funding + deposit relationships</li>
+          <li><b>Owned channels &amp; agents:</b> CX as the post-aggregator growth engine</li>
+        </ul></div>
+        <div class="swcard t"><span class="k">Threat</span><ul>
+          <li><b>Credit cycle:</b> funding retreats exactly when borrowers need credit most</li>
+          <li><b>AI-lending scrutiny:</b> fair-lending / disparate-impact regulatory attention</li>
+          <li><b>Competition:</b> SoFi, LendingClub, and banks closing the AI gap</li>
+        </ul></div>
+      </div>
+    </div></div>
+
+    <div class="slide" id="matrix"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">B2 · The communications estate</span>
+        <h2>Every message class, one customer — two lenses on the same estate</h2>
+      </div>
+      <div class="skwrap">
+        <div class="skbar">
+          <span>
+            <button class="lensbtn" id="lens-comms" aria-pressed="true">Communications · volume lens</button>
+            <button class="lensbtn" id="lens-mkt" aria-pressed="false">Marketing · revenue lens</button>
+          </span>
+          <label for="skfilter">Filter by audience</label>
+          <select id="skfilter"><option value="all">All audiences</option><option value="b2c">B2C — borrowers</option><option value="b2b">B2B — partners</option></select>
+          <span class="skstat">active flow <b id="sk-active">All audiences</b></span>
+          <span class="skstat">share shown <b id="sk-share">100%</b></span>
+        </div>
+        <svg class="sk" id="sankey" role="img" aria-label="Sankey diagram: channels flow into five marketing motions (Acquisition, Cross-Sell, Nurture, Repeat, Transactional), which flow into five products; ribbon width shows illustrative share of marketing-influenced revenue; filterable by B2C or B2B audience"></svg>
+        <div class="sklegend" id="sklegend"></div>
+        <details class="sktable"><summary>view as table</summary><div id="sktbl"></div></details>
+      </div>
+      <p class="pmfoot" id="foot-comms"><b>Why the platform view matters:</b> in the volume lens, <b>~55% of everything Upstart sends is transactional, servicing, or regulatory</b> — traffic that appears in no marketing dashboard, yet carries the strictest law (Reg Z, Reg F, ECOA timing, E-SIGN). Marketing motions describe why the business sends; communications motions describe what governs the send. One estate, one customer on the receiving end — which is why this platform is scoped to communications, not marketing. Ribbon widths are illustrative message-volume shares, not reported figures.</p>
+      <p class="pmfoot" id="foot-mkt" style="display:none"><b>The structural problem:</b> 5 products × 5 motions = 25 growth cells, each running on 3–4 channels — and the mandate is to grow revenue <b>without letting CAC grow with it</b>. Rented channels (aggregators, direct mail, paid) scale cost linearly with volume; the owned motions — cross-sell, lifecycle, retention — are the only cells where revenue compounds while CAC falls. Ribbon widths are an illustrative share of marketing-influenced revenue, not reported figures.</p>
+    </div></div>
+
+    <div class="slide" id="challenges"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">B3 · Communications challenges on record</span>
+        <h2>Five business pains, one communications root cause each</h2>
+      </div>
+      <div class="chgrid">
+        <div class="chrow"><span class="n">1</span><div>
+          <h3>One borrower, seven senders, no referee</h3>
+          <p>Marketing (Braze · Iterable · SFMC), transactional (SendGrid), servicing (GBOT), collections (VoApps, dialers) all reach the <b>same person with no shared context, frequency caps, or channel arbitration</b> — over-messaged by one team, under-served by another. <span class="src">— recon v3, B4</span><span class="imp">→ platform answer: cross-tool orchestration on shared context</span></p>
+        </div></div>
+        <div class="chrow"><span class="n">2</span><div>
+          <h3>Compliance is enforced per-tool and proven nowhere</h3>
+          <p>Consent syncs tool-by-tool from OneTrust; campaign review is manual; <b>no unified send ledger exists</b> — while ~55% of volume is transactional/servicing/regulatory traffic carrying Reg F, TCPA, ECOA clocks, and E-SIGN. One regulator question = archaeology across six systems. <span class="src">— B2 volume lens · B4 gaps</span><span class="imp">→ platform answer: policy-as-code in the send path + one immutable ledger</span></p>
+        </div></div>
+        <div class="chrow"><span class="n">3</span><div>
+          <h3>The cheapest growth — cross-sell &amp; lifecycle — is the least industrialized motion</h3>
+          <p>Top-3 partners ≈ <b>61% of revenue</b> and contribution margin slid 60% → 56%: diversification must come from the borrower base. But sequencing one borrower across 5 products — and staying present through rate-driven approval whiplash (<b>reactivation, not re-acquisition</b>) — requires orchestration no single tool owns. <span class="src">— 10-K, FY2025</span><span class="imp">→ platform answer: owned motions where revenue compounds while CAC falls</span></p>
+        </div></div>
+        <div class="chrow"><span class="n">4</span><div>
+          <h3>Every product launch re-plumbs communications from scratch</h3>
+          <p>Personal → auto → HELOC → small-dollar → Cashline: each launch re-implements templates, triggers, preferences, and compliance review. <b>Cost-to-launch rises with the portfolio</b> — the JD's "scalable abstractions enabling product teams to deliver communications efficiently" is this challenge, stated as a requirement. <span class="src">— JD · product history</span><span class="imp">→ platform answer: send API + templates as a platform capability</span></p>
+        </div></div>
+        <div class="chrow"><span class="n">5</span><div>
+          <h3>The highest-risk channels have the weakest central control</h3>
+          <p><b>Ringless voicemail in collections</b> is a TCPA litigation magnet; the dialer and print/mail vendors are unknown even to a determined recon; pixels are consent-gated into measurement blindness. Governance debt accrues precisely where B4's red boxes sit. <span class="src">— recon v3 gaps</span><span class="imp">→ platform answer: govern first — ledger every send in weeks, not quarters</span></p>
+        </div></div>
+      </div>
+    </div></div>
+
+    <div class="slide" id="stack"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">B4 · Recon v3 — the communications estate, as-is</span>
+        <h2>As-is architecture through the communications lens — confidence-coded, gaps included</h2>
+      </div>
+      <div class="ompwrap">
+        <svg class="omp" id="omp" viewBox="0 0 1700 1050" role="img" aria-label="As-is communications architecture: data and orchestration feeding marketing activation, transactional notifications, in-house servicing and collections, and regulatory notices, with consent and measurement as cross-cutting zones; unknown components marked as gaps"></svg>
+      </div>
+      <div class="stacklegend">
+        <span class="tc conf">Confirmed (2+ sources)</span>
+        <span class="tc inf">Inferred (single source)</span>
+        <span class="tc own">In-house / build-not-buy</span>
+        <span class="tc" style="border-style:dashed;border-color:var(--gaprd);color:var(--gaprd)">Gap — unknown / unconfirmed</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px">— solid: API / event&nbsp;&nbsp;· ┅ dashed: batch&nbsp;&nbsp;· ⋯ dotted: manual&nbsp;&nbsp;· <span style="color:var(--amber)">┅ amber: consent sync</span></span>
+      </div>
+      <p class="stacknote"><b>What the comms lens adds to the recon:</b> servicing and collections run on an <b>in-house platform ("GBOT" — Get Back On Track, ML-driven outreach)</b> with in-house collectors under FDCPA/TCPA — confirmed from hiring JDs (17 open servicing/compliance/complaints roles). VoApps almost certainly serves <b>collections</b>, not marketing. The right side of the estate — reminder routing, dialer, print &amp; mail vendor, notice archive — is where external recon goes dark: <b>every red box is a week-one question</b>, and the absence of a unified send ledger across all six zones is the platform's opening argument.</p>
+      <div class="ompbacklog"><b>Recon backlog — how to close the red boxes:</b>&nbsp; CFPB complaint narratives (channel &amp; cadence evidence from real borrowers) · TCPA/FDCPA docket search (names dialer &amp; voicemail vendors in filings) · hiring JDs for dialer/CCaaS keywords (Five9, NICE, Genesys, LiveVox) · SPF/DKIM &amp; subdomain scan of servicing mail domains · borrower help-center copy (how notices say they arrive) · print-vendor customer lists (Lob, Broadridge, Smart Communications).</div>
+    </div></div>
+  </div>
+
+  <button class="jumpband" id="relay-jump" aria-label="Continue to Part II — the Comms Platform charter">
+    <span class="partlabel">Part II · The Comms Platform</span>
+    <span class="arr">▼</span>
+  </button>
+</div>
+
+<script>
+(function(){
+  var slides=document.querySelectorAll(".stage .slide"),
+      tabs=document.querySelectorAll(".deckhead .tab"),
+      prev=document.getElementById("sl-prev"),next=document.getElementById("sl-next"),
+      cur=0,N=slides.length;
+  function go(i){
+    if(i<0||i>=N)return;
+    cur=i;
+    slides.forEach(function(s,j){s.classList.toggle("active",j===i);if(j===i)s.scrollTop=0;});
+    tabs.forEach(function(t,j){t.setAttribute("aria-selected",j===i?"true":"false");});
+    prev.disabled=(i===0);next.disabled=(i===N-1);
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){go(parseInt(t.getAttribute("data-slide"),10));});});
+  prev.addEventListener("click",function(){go(cur-1);});
+  next.addEventListener("click",function(){go(cur+1);});
+  // top-nav Part I links switch slides instead of jumping
+  document.querySelectorAll("nav.top a[data-slide]").forEach(function(a){
+    a.addEventListener("click",function(e){
+      e.preventDefault();
+      go(parseInt(a.getAttribute("data-slide"),10));
+      document.getElementById("business").scrollIntoView({behavior:"smooth"});
+    });
+  });
+  // keyboard when deck is in view
+  document.addEventListener("keydown",function(e){
+    if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")return;
+    var r=document.getElementById("business").getBoundingClientRect();
+    if(r.bottom<100||r.top>window.innerHeight-100)return;
+    if(e.key==="ArrowRight")go(cur+1);
+    if(e.key==="ArrowLeft")go(cur-1);
+  });
+  // jump band → Part II
+  document.getElementById("relay-jump").addEventListener("click",function(){
+    var t=document.getElementById("relay-part");
+    if(t)t.scrollIntoView({behavior:"smooth"});
+  });
+  go(0);
+})();
+
+/* ---- Sankey: two lenses (communications volume / marketing revenue), audience filter ---- */
+(function(){
+  var svg=document.getElementById("sankey");if(!svg)return;
+  var LENSES={
+    comms:{
+      label:"Communications · volume",
+      motions:[
+        {id:"m1",name:"Acquire & Onboard"},
+        {id:"m2",name:"Expand"},
+        {id:"m3",name:"Engage & Nurture"},
+        {id:"m4",name:"Retain & Re-engage"},
+        {id:"m5",name:"Transactional"},
+        {id:"m6",name:"Servicing & Collections"},
+        {id:"m7",name:"Regulatory notices"}
+      ],
+      chorder:["Email","In-app / push","SMS","Direct mail","Agent calls","Ringless voicemail","Enterprise sales & BD"],
+      cm:[
+        ["Email","m1",6,"b2c"],["Email","m2",6,"b2c"],["Email","m3",7,"b2c"],["Email","m4",5,"b2c"],["Email","m5",12,"b2c"],["Email","m6",8,"b2c"],["Email","m7",2,"b2c"],
+        ["Email","m3",1,"b2b"],["Email","m5",1,"b2b"],
+        ["In-app / push","m5",7,"b2c"],["In-app / push","m6",3,"b2c"],["In-app / push","m2",3,"b2c"],["In-app / push","m4",2,"b2c"],["In-app / push","m3",1,"b2c"],
+        ["SMS","m6",7,"b2c"],["SMS","m5",3,"b2c"],["SMS","m4",2,"b2c"],["SMS","m3",2,"b2c"],
+        ["Direct mail","m1",4,"b2c"],["Direct mail","m7",4,"b2c"],["Direct mail","m4",1,"b2c"],
+        ["Agent calls","m6",5,"b2c"],["Agent calls","m1",1,"b2c"],
+        ["Ringless voicemail","m6",3,"b2c"],
+        ["Enterprise sales & BD","m1",2,"b2b"],["Enterprise sales & BD","m3",2,"b2b"]
+      ],
+      mp:[
+        ["m1","Personal loans",7,"b2c"],["m1","Auto refi",1,"b2c"],["m1","HELOC",1,"b2c"],["m1","Small-dollar relief",2,"b2c"],
+        ["m1","Personal loans",1,"b2b"],["m1","Auto refi",1,"b2b"],
+        ["m2","Cashline",4,"b2c"],["m2","Auto refi",2,"b2c"],["m2","HELOC",2,"b2c"],["m2","Small-dollar relief",1,"b2c"],
+        ["m3","Personal loans",5,"b2c"],["m3","HELOC",2,"b2c"],["m3","Cashline",2,"b2c"],["m3","Small-dollar relief",1,"b2c"],
+        ["m3","Personal loans",2,"b2b"],["m3","HELOC",1,"b2b"],
+        ["m4","Personal loans",5,"b2c"],["m4","Cashline",3,"b2c"],["m4","Small-dollar relief",2,"b2c"],
+        ["m5","Personal loans",12,"b2c"],["m5","Cashline",4,"b2c"],["m5","Auto refi",3,"b2c"],["m5","Small-dollar relief",2,"b2c"],["m5","HELOC",1,"b2c"],
+        ["m5","Personal loans",1,"b2b"],
+        ["m6","Personal loans",17,"b2c"],["m6","Auto refi",3,"b2c"],["m6","HELOC",2,"b2c"],["m6","Small-dollar relief",2,"b2c"],["m6","Cashline",2,"b2c"],
+        ["m7","Personal loans",4,"b2c"],["m7","Auto refi",1,"b2c"],["m7","HELOC",1,"b2c"]
+      ],
+      foot:"foot-comms",unit:"of message volume"
+    },
+    mkt:{
+      label:"Marketing · revenue",
+      motions:[
+        {id:"m1",name:"Acquisition"},
+        {id:"m2",name:"Cross-Sell"},
+        {id:"m3",name:"Nurture"},
+        {id:"m4",name:"Repeat"},
+        {id:"m5",name:"Transactional"}
+      ],
+      chorder:["Aggregators (Credit Karma)","Direct mail","Paid search & social","Enterprise sales & BD","Email","In-app / push","SMS","Ringless voicemail","PR / content / SEO·AEO","Reviews & social"],
+      cm:[
+        ["Aggregators (Credit Karma)","m1",28,"b2c"],
+        ["Direct mail","m1",13,"b2c"],["Direct mail","m3",3,"b2c"],
+        ["Paid search & social","m1",11,"b2c"],
+        ["Email","m2",5,"b2c"],["Email","m3",3,"b2c"],["Email","m4",2,"b2c"],["Email","m5",2,"b2c"],
+        ["Email","m3",1,"b2b"],["Email","m5",2,"b2b"],
+        ["In-app / push","m2",3,"b2c"],["In-app / push","m4",2,"b2c"],["In-app / push","m5",2,"b2c"],
+        ["SMS","m3",2,"b2c"],["SMS","m4",1,"b2c"],["SMS","m5",2,"b2c"],
+        ["Ringless voicemail","m3",2,"b2c"],
+        ["Enterprise sales & BD","m1",6,"b2b"],["Enterprise sales & BD","m3",3,"b2b"],
+        ["PR / content / SEO·AEO","m1",2,"b2c"],["PR / content / SEO·AEO","m3",1,"b2c"],
+        ["PR / content / SEO·AEO","m1",1,"b2b"],["PR / content / SEO·AEO","m3",1,"b2b"],
+        ["Reviews & social","m1",1,"b2c"],["Reviews & social","m3",1,"b2c"]
+      ],
+      mp:[
+        ["m1","Personal loans",38,"b2c"],["m1","Auto refi",6,"b2c"],["m1","HELOC",5,"b2c"],["m1","Small-dollar relief",6,"b2c"],
+        ["m1","Personal loans",4,"b2b"],["m1","Auto refi",2,"b2b"],["m1","HELOC",1,"b2b"],
+        ["m2","Cashline",3,"b2c"],["m2","Auto refi",2,"b2c"],["m2","HELOC",2,"b2c"],["m2","Small-dollar relief",1,"b2c"],
+        ["m3","Personal loans",6,"b2c"],["m3","HELOC",2,"b2c"],["m3","Small-dollar relief",2,"b2c"],["m3","Cashline",2,"b2c"],
+        ["m3","Personal loans",3,"b2b"],["m3","Auto refi",1,"b2b"],["m3","HELOC",1,"b2b"],
+        ["m4","Personal loans",2,"b2c"],["m4","Cashline",2,"b2c"],["m4","Small-dollar relief",1,"b2c"],
+        ["m5","Personal loans",3,"b2c"],["m5","Cashline",1,"b2c"],["m5","Auto refi",1,"b2c"],["m5","Small-dollar relief",1,"b2c"],
+        ["m5","Personal loans",1,"b2b"],["m5","Auto refi",1,"b2b"]
+      ],
+      foot:"foot-mkt",unit:"of marketing-influenced revenue"
+    }
+  };
+  var PRODORDER=["Personal loans","Auto refi","HELOC","Small-dollar relief","Cashline"];
+  var NS="http://www.w3.org/2000/svg";
+  var curLens="comms",curFilter="all";
+  function el(t,attrs,parent){var e=document.createElementNS(NS,t);for(var k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e}
+  function agg(links,filter){
+    var m={},order=[];
+    links.forEach(function(l){
+      if(filter!=="all"&&l[3]!==filter)return;
+      var k=l[0]+"\u0001"+l[1];
+      if(!(k in m)){m[k]=0;order.push([l[0],l[1]]);}
+      m[k]+=l[2];
+    });
+    return order.map(function(o){return [o[0],o[1],m[o[0]+"\u0001"+o[1]]]});
+  }
+  function render(){
+    var L=LENSES[curLens],filter=curFilter;
+    function nameOf(id){for(var i=0;i<L.motions.length;i++)if(L.motions[i].id===id)return L.motions[i].name;return id}
+    svg.innerHTML="";
+    var cm=agg(L.cm,filter),mp=agg(L.mp,filter);
+    var chT={},mT={},pT={};
+    cm.forEach(function(l){chT[l[0]]=(chT[l[0]]||0)+l[2];mT[l[1]]=(mT[l[1]]||0)+l[2]});
+    mp.forEach(function(l){pT[l[1]]=(pT[l[1]]||0)+l[2]});
+    var chans=L.chorder.filter(function(c){return chT[c]}),
+        mots=L.motions.filter(function(m){return mT[m.id]}),
+        prods=PRODORDER.filter(function(p){return pT[p]});
+    var total=chans.reduce(function(a,c){return a+chT[c]},0);
+    var W=1000,TOP=12,NW=10,X0=8,X1=470,X2=884;
+    var gapC=14,gapM=mots.length>5?20:26,gapP=26;
+    var scale=Math.min(5.2,420/total);
+    var colH=function(vals,gap){return vals.reduce(function(a,v){return a+v*scale},0)+gap*(vals.length-1)}
+    var hC=colH(chans.map(function(c){return chT[c]}),gapC),
+        hM=colH(mots.map(function(m){return mT[m.id]}),gapM),
+        hP=colH(prods.map(function(p){return pT[p]}),gapP);
+    var H=Math.max(hC,hM,hP)+2*TOP+26;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    var gR=el("g",{},svg),gN=el("g",{},svg);
+    function place(items,vals,gap,h){var pos={},y=TOP+(H-2*TOP-h)/2;items.forEach(function(it,i){pos[it]={y:y,h:vals[i]*scale,a:0,b:0};y+=vals[i]*scale+gap});return pos}
+    var chPos=place(chans,chans.map(function(c){return chT[c]}),gapC,hC),
+        mPos=place(mots.map(function(m){return m.id}),mots.map(function(m){return mT[m.id]}),gapM,hM),
+        pPos=place(prods,prods.map(function(p){return pT[p]}),gapP,hP);
+    function ribbon(x0,sy,x1,ty,h,cls,names){
+      var mx=(x0+x1)/2;
+      var d="M"+x0+" "+sy+" C"+mx+" "+sy+","+mx+" "+ty+","+x1+" "+ty+
+            " L"+x1+" "+(ty+h)+" C"+mx+" "+(ty+h)+","+mx+" "+(sy+h)+","+x0+" "+(sy+h)+" Z";
+      var p=el("path",{d:d,"class":"sk-ribbon "+cls,"data-n":names},gR);
+      var t=el("title",{},p);t.textContent=names.split("|").join(" → ");
+    }
+    chans.forEach(function(c){
+      cm.filter(function(l){return l[0]===c}).sort(function(a,b){return a[1]<b[1]?-1:1})
+        .forEach(function(l){
+          var h=l[2]*scale,cp=chPos[c],mp2=mPos[l[1]];
+          ribbon(X0+NW,cp.y+cp.a,X1,mp2.y+mp2.a,h,l[1],c+"|"+nameOf(l[1])+"|"+l[2]+"%");
+          cp.a+=h;mp2.a+=h;
+        });
+    });
+    mots.forEach(function(m){
+      mp.filter(function(l){return l[0]===m.id}).sort(function(a,b){return PRODORDER.indexOf(a[1])-PRODORDER.indexOf(b[1])})
+        .forEach(function(l){
+          var h=l[2]*scale,mp2=mPos[m.id],pp=pPos[l[1]];
+          ribbon(X1+NW,mp2.y+mp2.b,X2,pp.y+pp.b,h,m.id,nameOf(m.id)+"|"+l[1]+"|"+l[2]+"%");
+          mp2.b+=h;pp.b+=h;
+        });
+    });
+    function node(x,pos,label,cls,side,sub){
+      var g=el("g",{"class":"sk-node "+(cls||""),"data-n":label},gN);
+      el("rect",{x:x,y:pos.y,width:NW,height:Math.max(pos.h,2.5),rx:2},g);
+      var tx=side==="left"?x+NW+8:x-8,anchor=side==="left"?"start":"end";
+      var t=el("text",{x:tx,y:pos.y+Math.max(pos.h,2.5)/2+4.5,"text-anchor":anchor},g);
+      t.textContent=label;
+      if(sub){var s=el("tspan",{"class":"sv",dx:7},t);s.textContent=sub;}
+    }
+    chans.forEach(function(c){node(X0,chPos[c],c,"","left",chT[c]+"%")});
+    mots.forEach(function(m){node(X1,mPos[m.id],m.name,"mn "+m.id,"left",mT[m.id]+"%")});
+    prods.forEach(function(p){node(X2,pPos[p],p,"","right",pT[p]+"%")});
+    function setHL(name){
+      svg.classList.add("hovering");
+      gR.querySelectorAll(".sk-ribbon").forEach(function(r){
+        r.classList.toggle("hl",r.getAttribute("data-n").indexOf(name)!==-1);
+      });
+    }
+    function clearHL(){svg.classList.remove("hovering");gR.querySelectorAll(".hl").forEach(function(r){r.classList.remove("hl")});}
+    gN.querySelectorAll(".sk-node").forEach(function(n){
+      n.addEventListener("mouseenter",function(){setHL(n.getAttribute("data-n"))});
+      n.addEventListener("mouseleave",clearHL);
+    });
+    gR.querySelectorAll(".sk-ribbon").forEach(function(r){
+      r.addEventListener("mouseenter",function(){svg.classList.add("hovering");r.classList.add("hl")});
+      r.addEventListener("mouseleave",clearHL);
+    });
+    // legend
+    var lg=document.getElementById("sklegend");lg.innerHTML="";
+    mots.forEach(function(m){
+      var i=parseInt(m.id.slice(1),10);
+      var s=document.createElement("span");
+      s.innerHTML='<span class="sw" style="background:var(--s'+i+')"></span>'+m.name;
+      lg.appendChild(s);
+    });
+    // stats + footer swap
+    var names={all:"All audiences",b2c:"B2C — borrowers",b2b:"B2B — partners"};
+    document.getElementById("sk-active").textContent=names[filter]+" · "+L.label;
+    document.getElementById("sk-share").textContent=total+"% "+L.unit;
+    document.getElementById("foot-comms").style.display=(curLens==="comms")?"":"none";
+    document.getElementById("foot-mkt").style.display=(curLens==="mkt")?"":"none";
+    // table view
+    var tb=document.getElementById("sktbl"),rows="";
+    L.cm.forEach(function(l){rows+="<tr><td>"+l[0]+"</td><td>"+nameOf(l[1])+"</td><td>—</td><td>"+l[3].toUpperCase()+"</td><td>"+l[2]+"%</td></tr>"});
+    L.mp.forEach(function(l){rows+="<tr><td>—</td><td>"+nameOf(l[0])+"</td><td>"+l[1]+"</td><td>"+l[3].toUpperCase()+"</td><td>"+l[2]+"%</td></tr>"});
+    tb.innerHTML="<table><thead><tr><th>Channel</th><th>Motion</th><th>Product</th><th>Audience</th><th>Share</th></tr></thead><tbody>"+rows+"</tbody></table>";
+  }
+  document.getElementById("skfilter").addEventListener("change",function(e){curFilter=e.target.value;render()});
+  var bC=document.getElementById("lens-comms"),bM=document.getElementById("lens-mkt");
+  function setLens(l){curLens=l;bC.setAttribute("aria-pressed",l==="comms"?"true":"false");bM.setAttribute("aria-pressed",l==="mkt"?"true":"false");render()}
+  bC.addEventListener("click",function(){setLens("comms")});
+  bM.addEventListener("click",function(){setLens("mkt")});
+  render();
+})();
+
+/* ---- OMP-style as-is architecture (B4) ---- */
+(function(){
+  var svg=document.getElementById("omp");if(!svg)return;
+  var NS="http://www.w3.org/2000/svg";
+  function el(t,attrs,parent){var e=document.createElementNS(NS,t);for(var k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e}
+  // markers
+  var defs=el("defs",{},svg);
+  var mk=el("marker",{id:"oma",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+  el("path",{d:"M0 0L10 5L0 10z"},mk);
+  var mkc=el("marker",{id:"omac",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse","class":"mkc"},defs);
+  el("path",{d:"M0 0L10 5L0 10z"},mkc);
+  var gZ=el("g",{},svg),gA=el("g",{},svg),gN=el("g",{},svg);
+  function zone(x,y,w,h,label,hue,txtcol){
+    el("rect",{x:x,y:y,width:w,height:h,rx:12,"class":"oz",
+      style:"fill:color-mix(in srgb,"+hue+" 7%,var(--surface2));stroke:color-mix(in srgb,"+hue+" 38%,var(--line))"},gZ);
+    var t=el("text",{x:x+14,y:y+22,"class":"ozlab",style:"fill:"+(txtcol||("color-mix(in srgb,"+hue+" 70%,var(--ink))"))},gZ);
+    t.textContent=label;
+  }
+  function node(x,y,w,h,cls,lines){
+    var g=el("g",{"class":"on "+cls},gN);
+    el("rect",{x:x,y:y,width:w,height:h,rx:cls==="team"?22:8},g);
+    var cy=y+h/2-(lines.length-1)*6.2+3.5;
+    lines.forEach(function(L,i){
+      var t=el("text",{x:x+w/2,y:cy+i*12.4,"text-anchor":"middle","class":i===0?"t":"s"},g);
+      t.textContent=L;
+    });
+  }
+  function arrow(pts,cls,label,lx,ly){
+    var d="M"+pts.map(function(p){return p[0]+" "+p[1]}).join(" L ");
+    el("path",{d:d,"class":"ar "+(cls||""),"marker-end":cls==="consent"?"url(#omac)":"url(#oma)"},gA);
+    if(label){var t=el("text",{x:lx,y:ly,"class":"arlab "+(cls==="consent"?"consent":""),"text-anchor":"middle"},gA);t.textContent=label;}
+  }
+  // ---- zones ----
+  zone(30,30,600,320,"DATA & ORCHESTRATION","#1baf7a");
+  zone(950,30,560,320,"TRANSACTIONAL NOTIFICATIONS","#4a3aa7");
+  zone(30,390,290,300,"AUTHORING & REVIEW","#eda100");
+  zone(350,390,560,300,"ACTIVATION / DELIVERY — MARKETING","#e34948");
+  zone(950,390,560,300,"SERVICING & COLLECTIONS","#2a78d6");
+  zone(30,730,290,300,"CONSENT & GOVERNANCE","#eda100");
+  zone(350,730,560,300,"MEASUREMENT","#008300");
+  zone(950,730,560,300,"REGULATORY NOTICES","#8a5a83");
+  // customer rail
+  el("rect",{x:1550,y:30,width:120,height:1000,rx:12,"class":"oz",style:"fill:var(--ink);stroke:var(--ink)"},gZ);
+  var custLines=["BORROWER","& PARTNERS","","email","SMS","push","in-app","voicemail","agent call","letter"];
+  custLines.forEach(function(L,i){
+    var t=el("text",{x:1610,y:90+i*26,"text-anchor":"middle",style:"font:600 12px 'IBM Plex Mono',monospace;fill:"+(i<2?"var(--mint)":"var(--bg)")},gZ);
+    t.textContent=L;
+  });
+  // ---- nodes ----
+  node(50,84,180,56,"own",["Lending core &","product events"]);
+  node(50,156,180,44,"conf",["Fivetran · Airbyte · SQS","daily batch"]);
+  node(50,216,180,44,"conf",["Confluent Kafka","event stream"]);
+  node(260,120,170,60,"conf",["Databricks + Delta","· Redshift"]);
+  node(260,200,170,44,"conf",["dbt · Airflow · Temporal"]);
+  node(450,84,160,84,"own",["★ In-house","Composable CDP","segments · audiences"]);
+  node(450,190,160,54,"conf",["Hightouch · Census","reverse-ETL"]);
+  node(970,84,210,72,"own",["Event triggers","decisioned · funded","payment posted · doc ready"]);
+  node(1230,84,180,56,"conf",["SendGrid","transactional email"]);
+  node(1230,160,180,56,"inf",["In-app & push service","(in-house, inferred)"]);
+  node(970,180,210,50,"conf",["DocuSign","e-sign packets"]);
+  node(970,250,210,44,"conf",["Stripe payment events"]);
+  node(50,436,250,48,"team",["Lifecycle Marketing (Growth)"]);
+  node(50,500,250,48,"team",["Product & Servicing teams"]);
+  node(50,564,250,72,"gap",["Compliance review","manual · per-campaign","(no policy-as-code)"]);
+  node(380,446,170,64,"conf",["Braze","email · push · in-app"]);
+  node(580,446,150,56,"conf",["Iterable"]);
+  node(760,446,130,56,"inf",["SFMC","legacy — validate"]);
+  node(580,530,150,48,"inf",["Adobe Campaign","inferred"]);
+  var pn=el("text",{x:380,y:625,"class":"arlab"},gN);pn.textContent="aggregators & paid media — out of comms scope";pn.setAttribute("text-anchor","start");
+  node(970,436,230,76,"own",["★ In-house servicing +","GBOT collections platform","ML-driven outreach"]);
+  node(1240,436,190,64,"gap",["Payment reminders","email / SMS — routing","unconfirmed"]);
+  node(970,532,230,56,"conf",["VoApps ringless voicemail","collections outreach"]);
+  node(1240,520,190,56,"gap",["Agent voice / dialer","vendor unknown"]);
+  node(1240,596,190,52,"gap",["Late-stage agencies /","debt sale — unknown"]);
+  node(970,778,220,68,"gap",["Adverse-action & disclosure","generation — in-house?","unconfirmed"]);
+  node(1240,778,190,60,"inf",["E-delivery — SendGrid","+ E-SIGN state"]);
+  node(1240,858,190,56,"gap",["Print & mail vendor","unknown (Lob-class)"]);
+  node(970,866,220,56,"gap",["Notice archive / proof","no unified ledger"]);
+  node(380,778,170,56,"conf",["Looker · Mode · Tableau"]);
+  node(570,778,170,56,"own",["In-house MMM / geo-lift"]);
+  node(380,858,360,52,"gap",["Per-tool engagement exports","no unified send ledger"]);
+  node(50,778,250,44,"conf",["OneTrust — consent SoR"]);
+  node(50,834,250,44,"conf",["Validity · DMARC · Proofpoint"]);
+  node(50,890,250,44,"conf",["Datadog observability"]);
+  node(50,946,250,48,"gap",["No cross-tool frequency /","quiet-hours governor"]);
+  // ---- arrows ----
+  arrow([[140,140],[140,216]],"","",0,0);
+  arrow([[230,178],[245,178],[245,150],[260,150]],"batch","daily",243,143);
+  arrow([[230,238],[245,238],[245,166],[260,166]],"","stream",244,255);
+  arrow([[430,150],[440,150],[440,126],[450,126]],"batch","dbt · daily",437,113);
+  arrow([[530,168],[530,190]],"","",0,0);
+  arrow([[530,244],[530,340],[465,340],[465,446]],"batch","audiences · daily + incr",530,336);
+  arrow([[610,230],[655,230],[655,446]],"batch","",0,0);
+  arrow([[230,104],[940,104],[966,110]],"","events · API",600,96);
+  arrow([[1180,110],[1230,110]],"","API",1205,102);
+  arrow([[1180,140],[1205,140],[1205,186],[1230,186]],"","",0,0);
+  arrow([[1075,180],[1075,158]],"","doc events",1075,174);
+  arrow([[1410,112],[1550,112]],"","email",1480,104);
+  arrow([[1410,188],[1550,188]],"","push",1480,180);
+  arrow([[550,478],[920,478],[920,370],[1550,370]],"","marketing sends",1230,362);
+  arrow([[1200,470],[1240,470]],"","cadences",1220,462);
+  arrow([[1085,512],[1085,532]],"","",0,0);
+  arrow([[1200,500],[1220,500],[1220,548],[1240,548]],"","",0,0);
+  arrow([[1200,495],[1215,495],[1215,622],[1240,622]],"","late-stage handoff",1120,626);
+  arrow([[1430,468],[1550,468]],"","email/SMS",1490,460);
+  arrow([[1085,588],[1085,700],[1550,700]],"","voicemail",1300,693);
+  arrow([[1430,548],[1550,548]],"","calls",1490,540);
+  arrow([[1190,806],[1240,806]],"","",0,0);
+  arrow([[1190,830],[1215,830],[1215,886],[1240,886]],"","",0,0);
+  arrow([[1430,806],[1550,806]],"","e-delivery",1490,798);
+  arrow([[1430,886],[1550,886]],"","letters",1490,878);
+  arrow([[300,460],[340,460],[340,470],[380,470]],"manual","builds journeys",340,448);
+  arrow([[300,600],[350,600]],"manual","per-campaign review",322,590);
+  arrow([[465,510],[465,778]],"batch","engagement exports",467,722);
+  arrow([[300,790],[330,790],[330,716],[1490,716]],"consent","OneTrust consent synced per-tool (Braze · SendGrid · servicing) — no central enforcement point",900,708);
+})();
+</script>
+
+<script>
+(function(){
+  function go(id){var t=document.getElementById(id);if(t)t.scrollIntoView({behavior:"smooth"});}
+  var a=document.getElementById("p0-jump"),b=document.getElementById("p0-c1"),c=document.getElementById("p0-c2");
+  if(a)a.addEventListener("click",function(){go("business")});
+  if(b)b.addEventListener("click",function(){go("business")});
+  if(c)c.addEventListener("click",function(){go("relay-part")});
+})();
+</script><style>
+:root{
+  --bg:#F6FAF9; --surface:#FFFFFF; --surface2:#EEF5F3; --ink:#10312F; --muted:#576967;
+  --line:#D8E4E1; --line2:#C4D6D2;
+  --teal:#01807B; --teal-deep:#0A5C58; --mint:#02A583; --mint-soft:#DDF3EC;
+  --amber:#AE5427; --amber-soft:#F8EDE4;
+  --graphite:#41504F; --graphite-soft:#E8EDEC;
+  --chip-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(16,49,47,.05),0 8px 28px rgba(16,49,47,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1A19; --surface:#122422; --surface2:#16302D; --ink:#E3EFED; --muted:#96ACA9;
+    --line:#24403D; --line2:#2F524E;
+    --teal:#36B7AF; --teal-deep:#79D2CB; --mint:#3BD9AF; --mint-soft:#123B32;
+    --amber:#E0925F; --amber-soft:#3A2417;
+    --graphite:#9FB1AF; --graphite-soft:#1C3330;
+    --chip-ink:#0B1A19;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1A19; --surface:#122422; --surface2:#16302D; --ink:#E3EFED; --muted:#96ACA9;
+  --line:#24403D; --line2:#2F524E;
+  --teal:#36B7AF; --teal-deep:#79D2CB; --mint:#3BD9AF; --mint-soft:#123B32;
+  --amber:#E0925F; --amber-soft:#3A2417;
+  --graphite:#9FB1AF; --graphite-soft:#1C3330;
+  --chip-ink:#0B1A19;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15.5px/1.65 "IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:"Archivo","IBM Plex Sans",sans-serif;line-height:1.15;text-wrap:balance;margin:0}
+a{color:var(--teal)}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-weight:600}
+p{margin:.6em 0}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:4px}
+
+/* part II deck specifics */
+.jumpband.up{padding:10px 24px}
+.jumpband.up .arr{transition:transform .2s ease}
+.jumpband.up:hover .arr{transform:translateY(-3px)}
+.rbrand{font-family:"Manrope","Archivo","IBM Plex Sans",sans-serif;font-weight:700;font-size:26px;letter-spacing:-.015em;color:var(--ink);line-height:1;white-space:nowrap}
+.rbrand .dot{color:var(--teal)}
+.hdrlogo{display:flex;align-items:center;gap:12px}
+.hdrlogo .sep{width:1px;height:22px;background:var(--line2)}
+.punch{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.punch b{color:var(--teal-deep);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:12px}
+.tab:disabled{opacity:.45;cursor:default}
+
+/* WHY rows */
+.whygrid{display:grid;gap:12px}
+.whyrow{display:grid;grid-template-columns:52px 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow)}
+.whyrow .n{font-family:"Archivo";font-size:28px;font-weight:800;color:var(--teal);line-height:1}
+.whyrow h3{font-size:16.5px;margin-bottom:5px}
+.whyrow p{font-size:13.8px;color:var(--muted);margin:0;max-width:92ch}
+.whyrow p b{color:var(--ink);font-weight:600}
+.whyrow .tag{display:inline-block;margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.whysum{margin-top:12px;background:var(--ink);border-radius:12px;padding:14px 20px;color:var(--bg);font-size:13.5px}
+:root[data-theme="dark"] .whysum{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .whysum{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}}
+.whysum b{color:var(--mint)}
+
+/* WHO table */
+.whowrap{overflow-x:auto;border-radius:12px;box-shadow:var(--shadow)}
+table.who{border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:12.8px;min-width:1240px;width:100%}
+table.who th{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);font-weight:600;white-space:nowrap;background:var(--surface2)}
+table.who th.c{text-align:center}
+table.who td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.who tr:last-child td{border-bottom:none}
+td.usr{font-weight:600;white-space:nowrap;min-width:180px}
+td.usr .sub{display:block;font-weight:400;font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted)}
+td.ucs{color:var(--muted);min-width:300px;max-width:360px}
+td.ucs b{color:var(--ink);font-weight:600}
+td.impact{min-width:200px;max-width:230px}
+.ibadge{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.06em;padding:3px 10px;border-radius:6px}
+.ibadge.h{background:var(--teal);color:var(--chip-ink)}
+.ibadge.m{background:var(--amber-soft);color:var(--amber)}
+.ibadge.l{background:var(--graphite-soft);color:var(--graphite)}
+.ibadge.lh{background:var(--mint-soft);color:var(--teal)}
+td.impact .iw{display:block;margin-top:4px;font-size:11.5px;color:var(--muted)}
+td.vb{text-align:center;min-width:86px}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%}
+.dot.p{background:var(--teal)}
+.dot.s{background:none;border:2px solid var(--line2)}
+.whonote{margin-top:12px;font-size:12.8px;color:var(--muted);max-width:96ch}
+.whonote b{color:var(--ink)}
+.whokey{margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+
+footer{padding:26px 0 40px;color:var(--muted);font-size:12.5px}
+footer .mono{font-family:"IBM Plex Mono",monospace;font-size:11px}
+</style>
+
+<div class="deckview" id="relay-part">
+  <button class="jumpband up" id="p1-jump" aria-label="Back to Part I — the business">
+    <span class="arr">▲</span>
+    <span class="partlabel">Part I · The Business</span>
+  </button>
+  <div class="deckhead"><div class="row">
+    <span class="hdrlogo"><span class="uplogo" role="img" aria-label="Upstart"><svg viewBox="0 0 353 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M139.164 29.8697C139.164 45.4249 130.389 53.2409 116.765 53.2409C103.218 53.2409 94.5965 45.4249 94.5965 30.3174V0.332642H103.743V29.9464C103.743 39.6173 108.732 44.8236 116.919 44.8236C125.029 44.8236 130.018 39.9115 130.018 30.3174V0.332642H139.164V29.8697Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M156.37 46.3203C159.12 49.9661 163.213 53.2409 169.686 53.2409C179.063 53.2409 187.992 45.8726 187.992 32.7735C187.992 19.6743 178.986 12.3061 169.686 12.3061C163.367 12.3061 159.273 15.5809 156.37 19.6743V13.1248H147.364V64.3316H156.37V46.3203ZM156.139 32.7735C156.139 25.111 161.499 20.1221 167.601 20.1221C173.703 20.1221 178.833 25.0342 178.833 32.7735C178.833 40.5895 173.78 45.4249 167.601 45.4249C161.499 45.4249 156.139 40.436 156.139 32.7735Z" fill="#222929"/>
+    <path d="M209.073 53.1641C203.496 53.1641 197.317 51.1557 192.405 47.2925L196.422 41.1907C200.669 44.3887 205.274 46.0261 209.291 46.0261C213.167 46.0261 215.393 44.3887 215.393 41.7791V41.6256C215.393 38.5811 211.222 37.5321 206.617 36.125C200.81 34.4876 194.337 32.1083 194.337 24.5865V24.433C194.337 16.988 200.515 12.4596 208.319 12.4596C213.231 12.4596 218.591 14.1737 222.748 16.924L219.179 23.3201C215.393 21.0175 211.363 19.5976 208.088 19.5976C204.596 19.5976 202.588 21.235 202.588 23.5375V23.6911C202.588 26.5181 206.835 27.7078 211.44 29.1917C217.171 30.9826 223.643 33.5794 223.643 40.6534V40.8069C223.656 49.0706 217.26 53.1641 209.073 53.1641Z" fill="#222929"/>
+    <path d="M241.821 40.1417C241.821 43.634 243.612 45.0539 246.656 45.0539C248.665 45.0539 250.456 44.6062 252.234 43.7107V51.079C249.995 52.3454 247.475 53.0874 244.124 53.0874C237.497 53.0874 232.815 50.1836 232.815 41.5489V20.864H227.826V13.1248H232.815V2.341H241.821V13.1248H252.387V20.864H241.821V40.1417Z" fill="#222929"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M284.598 47.5867V52.4222H293.54V29.1277C293.54 18.6382 287.886 12.5363 276.27 12.5363C269.874 12.5363 265.627 13.8795 261.316 15.8111L263.772 23.0259C267.341 21.542 270.616 20.5698 275.004 20.5698C281.246 20.5698 284.675 23.5375 284.675 28.9742V29.9464C281.63 28.9742 278.573 28.309 273.814 28.309C264.655 28.309 257.888 32.4792 257.888 40.9604V41.1139C257.888 48.9939 264.425 53.2409 271.87 53.2409C277.831 53.2409 281.924 50.7848 284.598 47.5867ZM275.823 34.1934C279.328 34.1934 282.526 34.8586 284.828 35.754H284.815V38.2101C284.815 43.1223 280.351 46.4738 274.403 46.4738C270.168 46.4738 266.817 44.3887 266.817 40.6662V40.5127C266.817 36.496 270.168 34.1934 275.823 34.1934Z" fill="#222929"/>
+    <path d="M309.172 52.4222H300.166V13.1248H309.172V21.9769C311.628 16.0925 316.169 12.0758 323.089 12.3828V21.913H322.565C314.672 21.913 309.172 27.0426 309.172 37.4682V52.4222Z" fill="#222929"/>
+    <path d="M342.29 40.1417C342.29 43.634 344.081 45.0539 347.126 45.0539C349.134 45.0539 350.925 44.6062 352.703 43.7107V51.079C350.465 52.3454 347.945 53.0874 344.593 53.0874C337.967 53.0874 333.285 50.1836 333.285 41.5489V20.864H328.296V13.1248H333.285V2.341H342.29V13.1248H352.857V20.864H342.29V40.1417Z" fill="#222929"/>
+    <path d="M10.322 23.4608L4.23291 29.5371C-1.1014 34.8714 -1.1014 43.5956 4.23291 48.9171V48.9299C9.56723 54.2514 18.2915 54.2514 23.613 48.9299L37.1726 35.3703V35.3959C37.7099 34.9609 38.3879 34.7051 39.1298 34.7051C39.8718 34.7051 40.5498 34.9609 41.087 35.3959H41.1126L29.4334 23.7166C24.163 18.4591 15.6819 18.3695 10.322 23.4608Z" fill="#00807B"/>
+    <path d="M74.0267 29.5371L48.839 4.34936L48.8262 4.33657C48.4936 4.00398 48.1482 3.69696 47.7901 3.40275C42.4174 -0.984953 34.4351 -0.66515 29.4334 4.32378C29.3438 4.41332 29.2671 4.50287 29.1775 4.59241L28.4228 5.34715L10.3091 23.4608C15.6818 18.3695 24.163 18.4591 29.4206 23.7294L41.0998 35.4086L54.6339 48.9299C59.9682 54.2642 68.6924 54.2642 74.0267 48.9299C79.361 43.5956 79.361 34.8714 74.0267 29.5371Z" fill="#00B1AC"/>
+</svg></span><span class="sep"></span><span class="rbrand">Relay<span class="dot">.</span></span></span>
+    <span class="punch">one contract — every Upstart communication <b>delivered · orchestrated · governed · measured</b></span>
+    <div class="tabs" role="tablist" aria-label="Relay sections">
+      <button class="tab" role="tab" data-s2="0" aria-selected="true">R1 Why</button>
+      <button class="tab" role="tab" data-s2="1" aria-selected="false">R2 Who</button>
+      <button class="tab" role="tab" data-s2="2" aria-selected="false">R3 How · plan</button>
+      <button class="tab" role="tab" data-s2="3" aria-selected="false">R4 How · to-be</button>
+    </div>
+  </div></div>
+
+  <div class="stage" id="stage2">
+    <button class="sidearr left" id="p2-prev" aria-label="Previous section">‹</button>
+    <button class="sidearr right" id="p2-next" aria-label="Next section">›</button>
+
+    <div class="slide active" id="why"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">R1 · Why</span>
+        <h2>Three reasons this platform must exist</h2>
+      </div>
+      <div class="whygrid">
+        <div class="whyrow"><span class="n">1</span><div>
+          <h3>Unified orchestration creates a better customer experience — and CX on owned channels is now the growth engine</h3>
+          <p>Today the same borrower is over-messaged by one team and under-served by another, because no system sees the whole conversation across Braze, SendGrid, and servicing rails. One orchestration layer — shared context, global frequency caps and quiet hours, channel arbitration — turns seven senders into <b>one Upstart voice</b>. And with paid signals consent-denied by default, personalized owned communication is where growth must come from: better CX here is <b>conversion, retention, and cross-sell</b>, not politeness.</p>
+          <span class="tag">outcome: conversion, retention & one upstart voice · answers challenges 1 & 3</span>
+        </div></div>
+        <div class="whyrow"><span class="n">2</span><div>
+          <h3>One platform takes the operational load off every team — set up once, govern once</h3>
+          <p><b>Setup:</b> every tool today needs its own specialists, integrations, and QA, and each new product re-implements sending from scratch — one contract makes comms a platform capability instead of a per-team project, so cost-to-launch falls as the portfolio grows. <b>Governance:</b> compliance moves from tool-by-tool reviews in meetings to policy defined once and enforced centrally at send-time — less review load for Compliance, faster launches for producers, and in a lending business, <b>one ledger of proof</b> (ECOA, Reg F, TCPA, E-SIGN) instead of six tools' export files.</p>
+          <span class="tag">outcome: lower cost-to-launch · centralized, provable compliance · answers challenges 2, 4 & 5</span>
+        </div></div>
+        <div class="whyrow"><span class="n">3</span><div>
+          <h3>Agentic-first: one contract that serves humans today and agents tomorrow</h3>
+          <p>The next generation of senders won't only be humans clicking in tools — they'll be agents acting for Growth, Servicing, and Support. A platform designed <b>agentic-first</b> (MCP and A2A surfaces, scoped agent identity, HITL approvals, full action audit) lets every team put agents to work on communications safely, instead of ten teams wiring agents straight into channel APIs. Humans and agents share <b>one contract, one policy gate, one ledger</b> — which is also why this platform won't need rebuilding in two years.</p>
+          <span class="tag">outcome: future-proof — agents as first-class senders · pre-empts the next challenge</span>
+        </div></div>
+      </div>
+      <p class="whysum"><b>In one line:</b> one platform that orchestrates every message into a single customer experience, carries the setup and governance load for every team — provably, in a regulated business — and speaks to humans and agents through the same contract.</p>
+    </div></div>
+
+    <div class="slide" id="who"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">R2 · Who</span>
+        <h2>The platform's users — prioritized by what enabling them unlocks</h2>
+      </div>
+      <div class="whowrap"><table class="who">
+        <thead><tr>
+          <th>User</th><th>Key use cases — what they need Relay to enable</th><th>Impact if enabled</th>
+          <th class="c">Delivered</th><th class="c">Orchestrated</th><th class="c">Governed</th><th class="c">Measured</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="usr">Servicing &amp; Collections Ops<span class="sub">GBOT · tenant #1</span></td>
+            <td class="ucs"><b>Compliant escalation journeys</b> — contact caps &amp; quiet hours enforced in the send path · <b>one borrower contact history</b> across marketing, servicing, collections</td>
+            <td class="impact"><span class="ibadge h">HIGH</span><span class="iw">Higher cure rates with Reg F exposure retired</span></td>
+            <td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Compliance &amp; Legal</td>
+            <td class="ucs"><b>Policy-as-code</b> — approve rules once, enforced on every send · <b>exam-ready send ledger</b> answering any regulator in one export</td>
+            <td class="impact"><span class="ibadge h">HIGH</span><span class="iw">Every send provable; reviews stop gating launches</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Lifecycle Marketing<span class="sub">Growth · stays in Braze</span></td>
+            <td class="ucs"><b>CDP audiences on tap</b> with synced consent, suppressions &amp; cross-tool frequency in Braze · <b>pre-approved policy</b> turning reviews into checks</td>
+            <td class="impact"><span class="ibadge h">HIGH</span><span class="iw">Cross-sell revenue compounds without CAC growing</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Product Teams &amp; Engineers<span class="sub">per product line</span></td>
+            <td class="ucs"><b>Send API + template registry</b> — transactional &amp; product comms as an API call, disclosures and E-SIGN state handled by the platform</td>
+            <td class="impact"><span class="ibadge h">HIGH</span><span class="iw">New products launch comms with zero new plumbing</span></td>
+            <td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Regulatory Notice Ops<span class="sub">legal · servicing ops</span></td>
+            <td class="ucs"><b>Adverse-action &amp; disclosure pipeline</b> — generate → deliver (e-delivery + print) → <b>prove</b>, with ECOA clocks owned by the platform</td>
+            <td class="impact"><span class="ibadge h">HIGH</span><span class="iw">Regulatory deadlines owned by systems, not calendars</span></td>
+            <td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Borrower Success / Support</td>
+            <td class="ucs"><b>Full contact view</b> — what the borrower received on every channel, before the agent answers</td>
+            <td class="impact"><span class="ibadge m">MED</span><span class="iw">Context-rich support; fewer repeat contacts</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Risk</td>
+            <td class="ucs"><b>Global contact-pressure budgets</b> · complaint &amp; deliverability signals in one place</td>
+            <td class="impact"><span class="ibadge m">MED</span><span class="iw">One dial for messaging pressure, not six tools</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Performance Marketing<span class="sub">Growth</span></td>
+            <td class="ucs"><b>Owned/paid alignment</b> — one suppression &amp; consent truth · clean conversion facts for incrementality</td>
+            <td class="impact"><span class="ibadge m">MED</span><span class="iw">Cleaner CAC math; paid and owned stop colliding</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Capital &amp; Banking Teams<span class="sub">B2B partners</span></td>
+            <td class="ucs"><b>Partner-grade policy sets</b> — co-brand rules, partner disclosures · per-partner audit trails as exports</td>
+            <td class="impact"><span class="ibadge m">MED</span><span class="iw">Partner audits become exports, not projects</span></td>
+            <td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Analytics &amp; Deliverability</td>
+            <td class="ucs"><b>Canonical send/engagement facts</b> in the warehouse · reputation signals joined to send behavior</td>
+            <td class="impact"><span class="ibadge m">MED</span><span class="iw">Any comms question becomes one query</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">Executive Sponsors<span class="sub">GMs · leadership</span></td>
+            <td class="ucs"><b>Platform scorecard</b> — adoption, time-to-launch, contact pressure, incident-free streak</td>
+            <td class="impact"><span class="ibadge l">LOW</span><span class="iw">Funding proof and an early-warning instrument</span></td>
+            <td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot s"></span></td><td class="vb"><span class="dot p"></span></td>
+          </tr>
+          <tr>
+            <td class="usr">AI Agents<span class="sub">emerging · 2nd customer</span></td>
+            <td class="ucs"><b>MCP / A2A surface</b> — scoped identity, budgets, HITL approvals (HumanLayer), full action audit; read-only first</td>
+            <td class="impact"><span class="ibadge lh">LOW → HIGH</span><span class="iw">Safe agentic sending before teams wire it ad-hoc</span></td>
+            <td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot p"></span></td><td class="vb"><span class="dot s"></span></td>
+          </tr>
+        </tbody>
+      </table></div>
+      <p class="whokey"><span><span class="dot p"></span>&nbsp; primary reliance on this promise</span><span><span class="dot s"></span>&nbsp; secondary</span></p>
+      <p class="whonote"><b>And the user who never logs in: the borrower.</b> One Upstart voice, preferences and evenings respected, disclosures findable later. When internal convenience conflicts with that contract, <b>the borrower wins</b> — the platform's tiebreak rule.</p>
+    </div></div>
+
+
+    <div class="slide" id="plan"><div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">R3 · How — the plan</span>
+        <h2>What changes in the stack — and what deliberately doesn't</h2>
+      </div>
+      <div class="dispgrid">
+        <div class="dcol">
+          <h3 class="dh build">BUILD — the thin waist <span>9 items, all thin</span></h3>
+          <div class="dcard b" data-tip="One append-only record of every message any system sends — who, what, when, which channel, and which policy allowed it. The flight recorder for all Upstart communications; almost everything else reads from it."><i>1</i><b>Unified Send Ledger</b><span>every send · immutable · queryable — the keystone</span></div>
+          <div class="dcard b" data-tip="A fast lookup that answers: how many times, and when, has this borrower been contacted — across ALL tools? Powers frequency caps, quiet hours, and Reg F contact limits at send time."><i>2</i><b>Counter &amp; Suppression Service</b><span>cross-tool frequency, quiet hours, Reg F counters</span></div>
+          <div class="dcard b" data-tip="Compliance rules written once as code — TCPA consent, quiet hours, required disclosures — and checked automatically on every send, instead of humans reviewing each campaign in meetings."><i>3</i><b>Policy-as-Code Engine</b><span>approve once; inline gate + Braze pre-flight</span></div>
+          <div class="dcard b" data-tip="One place to read or update a borrower&#x27;s consent and channel preferences. OneTrust stays the system of record; this makes every tool actually obey it, within minutes of a change."><i>4</i><b>Preference &amp; Consent API</b><span>one surface over OneTrust, propagation SLAs</span></div>
+          <div class="dcard b" data-tip="A single API any team calls to send a message — templates, disclosures, and delivery handled for them. Built for the teams Braze doesn&#x27;t serve: product, servicing, regulatory."><i>5</i><b>Send Gateway + Template Registry</b><span>for the tenants Braze doesn't serve</span></div>
+          <div class="dcard b" data-tip="The referee at send time: given everything queued for one borrower, pick the channel and the moment — or hold. Journey design stays in Braze; this only resolves conflicts across tools."><i>6</i><b>Channel Arbitration v1</b><span>the send-time referee — not journey orchestration</span></div>
+          <div class="dcard b" data-tip="Adverse-action letters and disclosures as a pipeline: generate from approved templates, deliver by email or paper based on E-SIGN status, archive the exact artifact as proof of delivery."><i>7</i><b>Regulatory Notice Pipeline</b><span>generate → deliver → prove, ECOA clocks owned</span></div>
+          <div class="dcard b" data-tip="The safe front door for AI agents: typed tools, scoped permissions, spend and volume budgets, human approval above thresholds — so agents never touch channel APIs directly."><i>8</i><b>Agent Surface (MCP / A2A)</b><span>scoped identity · budgets · HITL · audit</span></div>
+          <div class="dcard b" data-tip="A thin admin surface plus a Looker scorecard — tenant onboarding, budgets, incidents, adoption — built as dbt models on ledger data, not a new BI stack."><i>9</i><b>Ops Console &amp; Scorecard</b><span>dbt models on the ledger, rendered in Looker</span></div>
+        </div>
+        <div class="dcol">
+          <h3 class="dh ext">EXTEND — contract added</h3>
+          <div class="dcard e" data-tip="Add a millisecond-fast read endpoint to the existing CDP so send-time decisions (consent, lifecycle state, counters) don&#x27;t wait on a batch export. The CDP team keeps ownership."><b>In-house CDP</b><span>+ send-time read API (consent · state · counters)</span></div>
+          <div class="dcard e" data-tip="Braze keeps its studios and journeys. We feed suppressions and frequency counters IN through its APIs, and stream engagement events OUT via Currents — governed without being replaced."><b>Braze</b><span>governed-by-sync: counters in, Currents events out</span></div>
+          <div class="dcard e" data-tip="Route ringless-voicemail requests through the policy gate before they fire. The most litigation-exposed channel becomes the first fully governed one."><b>VoApps</b><span>highest-risk channel goes behind the gate first</span></div>
+          <div class="dcard e" data-tip="Two small changes: publish its send and engagement events to the ledger, and accept routed sends from the gateway."><b>In-app / push service</b><span>emits to ledger, accepts gateway routes</span></div>
+          <div class="dcard e" data-tip="Join deliverability reputation and experiment assignments to ledger rows, so measurement sees one story per message instead of per-tool fragments."><b>Validity · experimentation</b><span>signals joined to ledger; holdouts via gateway</span></div>
+          <h3 class="dh ok" style="margin-top:18px">OK AS-IS — on purpose</h3>
+          <div class="okchips">
+            <span>CDP → rETL → Braze audience flows</span><span>SendGrid delivery</span><span>OneTrust as consent SoR</span><span>Deliverability at the vendors</span><span>Braze journey authoring</span><span>Looker · Mode · Tableau</span><span>HumanLayer</span><span>Identity stitching in CDP</span>
+          </div>
+        </div>
+        <div class="dcol">
+          <h3 class="dh rep">REPLACE · VALIDATE · BUY</h3>
+          <div class="dcard r" data-tip="A legacy marketing cloud with a procurement trail but little observed activity. Confirm what still sends through it, migrate those, retire the contract — the platform&#x27;s first visible savings."><b>SFMC</b><span>sunset — the platform's first consolidation win</span></div>
+          <div class="dcard r" data-tip="Two modern marketing-automation platforms is one too many. Let six months of ledger adoption data pick the survivor — evidence, not opinions."><b>Iterable vs Braze</b><span>consolidate on adoption data, not day one</span></div>
+          <div class="dcard v" data-tip="A single weak signal suggests it exists. Week-one question: does anything actually send through it, or is it shelfware to cancel?"><b>Adobe Campaign</b><span>validate: is it even live?</span></div>
+          <div class="dcard v" data-tip="Find out what collections agents actually dial with. Whatever it is, it must emit call events to the ledger and respect the contact counters."><b>Dialer / CCaaS</b><span>validate vendor; wire its events to the ledger</span></div>
+          <div class="dcard v" data-tip="Something generates adverse-action letters today — find the owner and the mechanism before proposing any change to it."><b>Adverse-action doc-gen</b><span>validate today's owner &amp; mechanism</span></div>
+          <div class="dcard y" data-tip="Don&#x27;t build a print shop. Buy a Lob-class API vendor and put it behind the regulatory pipeline for the notices that must land on paper."><b>Print &amp; mail</b><span>BUY (Lob-class) behind the regulatory pipeline</span></div>
+          <p class="dnote">Sequencing rule: <b>ledger first</b> — five builds and six users read from it. Governance before orchestration. Nothing a revenue-carrying team touches is replaced in year one.</p>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="slide" id="tobe"><div class="wrap" style="max-width:1560px">
+      <div class="sec-head">
+        <span class="eyebrow">R4 · How — the to-be architecture</span>
+        <h2>Turn the builds on and off — watch who gets re-blocked</h2>
+      </div>
+      <div class="tbctl">
+        <span class="tblab">presets</span>
+        <button class="lensbtn pset" data-p="asis">As-is (all off)</button>
+        <button class="lensbtn pset" data-p="govern">Govern first · wk 2–6</button>
+        <button class="lensbtn pset" data-p="tenants">First tenants · wk 6–12</button>
+        <button class="lensbtn pset" data-p="full" aria-pressed="true">Full thin waist · mo 12</button>
+        <span class="impstat">users unblocked <b id="imp-users">12/12</b></span>
+        <span class="impstat">challenges answered <b id="imp-chal">5/5</b></span>
+      </div>
+      <div class="tbgrid">
+        <div class="trail" id="trail"></div>
+        <div>
+          <div class="ompwrap" style="padding:8px"><svg class="omp" id="tobesvg" viewBox="0 0 1700 1010" role="img" aria-label="To-be architecture: Relay thin waist between the federated data spine and the delivery estate; toggle each build to see enabled flows, restored as-is workarounds, and blocked dependents"></svg></div>
+          <p class="breaks" id="tbreaks"></p>
+        </div>
+      </div>
+      <div class="uchips" id="uchips"></div>
+    </div></div>
+
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <span class="mono">RELAY CHARTER · Gaurav Mehta · built from public signals — no confidential information · dispositions &amp; to-be architecture are a concept for discussion, to be validated in week one</span>
+</div></footer>
+
+<script>
+(function(){
+  var slides=document.querySelectorAll("#stage2 > .slide"),
+      tabs=document.querySelectorAll("#relay-part .deckhead .tab[data-s2]"),
+      prev=document.getElementById("p2-prev"),next=document.getElementById("p2-next"),
+      cur=0,N=slides.length;
+  function go(i){
+    if(i<0||i>=N)return;
+    cur=i;
+    slides.forEach(function(s,j){s.classList.toggle("active",j===i);if(j===i)s.scrollTop=0;});
+    tabs.forEach(function(t,j){t.setAttribute("aria-selected",j===i?"true":"false");});
+    prev.disabled=(i===0);next.disabled=(i===N-1);
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){go(parseInt(t.getAttribute("data-s2"),10));});});
+  prev.addEventListener("click",function(){go(cur-1);});
+  next.addEventListener("click",function(){go(cur+1);});
+  document.addEventListener("keydown",function(e){
+    if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA"||e.target.tagName==="SELECT")return;
+    var el=document.getElementById("relay-part");if(!el)return;
+    var r=el.getBoundingClientRect();
+    if(r.bottom<100||r.top>window.innerHeight-100)return;
+    if(e.key==="ArrowRight")go(cur+1);
+    if(e.key==="ArrowLeft")go(cur-1);
+  });
+  document.getElementById("p1-jump").addEventListener("click",function(){
+    var t=document.getElementById("business");
+    if(t)t.scrollIntoView({behavior:"smooth"});
+  });
+  go(0);
+})();
+</script>
+
+<style>
+/* R3 disposition board */
+.dispgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
+.dh{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;font-weight:600;margin-bottom:10px}
+.dh span{color:var(--muted);font-weight:400;margin-left:8px}
+.dh.build{color:var(--teal)} .dh.ext{color:var(--mint)} .dh.ok{color:var(--graphite)} .dh.rep{color:var(--amber)}
+.dcard{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 13px;margin-bottom:8px;box-shadow:var(--shadow)}
+.dcard i{grid-row:span 2;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--chip-ink);background:var(--teal);width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.dcard b{font-size:13px;color:var(--ink)}
+.dcard span{font-size:11.5px;color:var(--muted);grid-column:2}
+.dcard.b{border-color:color-mix(in srgb,var(--teal) 40%,var(--line))}
+.dcard.e{border-style:dashed;border-color:color-mix(in srgb,var(--mint) 55%,var(--line))}
+.dcard.e b::after{content:" · extend";font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--mint)}
+.dcard.r b::after{content:" · replace";font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--amber)}
+.dcard.v b::after{content:" · validate";font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--amber)}
+.dcard.y b::after{content:" · buy";font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--graphite)}
+.dcard.e,.dcard.r,.dcard.v,.dcard.y{grid-template-columns:1fr}
+.dcard.e span,.dcard.r span,.dcard.v span,.dcard.y span{grid-column:1}
+.okchips{display:flex;flex-wrap:wrap;gap:6px}
+.okchips span{font-size:11.5px;padding:5px 10px;border-radius:7px;background:var(--surface2);border:1px solid var(--line);color:var(--muted)}
+.dnote{font-size:12px;color:var(--muted);margin-top:12px}
+.dnote b{color:var(--teal)}
+
+/* R4 to-be interactive */
+.tbctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:12px}
+.tblab{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.impstat{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted)}
+.impstat b{color:var(--teal);font-size:14px}
+.tbgrid{display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start}
+@media(max-width:980px){.tbgrid{grid-template-columns:1fr}}
+.trail{display:flex;flex-direction:column;gap:7px}
+.trow{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;text-align:left;box-shadow:var(--shadow)}
+.trow i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--teal);color:var(--chip-ink)}
+.trow .nm{font-size:12px;font-weight:600;color:var(--ink);line-height:1.25}
+.trow .nm em{display:block;font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:9px;color:var(--muted);font-weight:400}
+.trow .sw{width:34px;height:19px;border-radius:999px;background:var(--teal);position:relative;transition:background .15s}
+.trow .sw::after{content:"";position:absolute;top:2.5px;left:17px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
+.trow.off{opacity:.75}
+.trow.off i{background:var(--graphite-soft);color:var(--graphite)}
+.trow.off .sw{background:var(--line2)}
+.trow.off .sw::after{left:3px}
+.trow.blocked{border-color:color-mix(in srgb,var(--amber) 55%,var(--line));border-style:dashed}
+.trow.blocked .sw{background:var(--amber)}
+.trow.blocked .nm em{color:var(--amber)}
+.breaks{margin:10px 2px 0;font-size:12px;color:var(--gaprd);font-family:"IBM Plex Mono",monospace;min-height:18px}
+.uchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.uchips span{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-family:"IBM Plex Mono",monospace;transition:all .15s}
+.uchips span.on{background:color-mix(in srgb,var(--teal) 12%,var(--surface));border-color:var(--teal);color:var(--teal-deep)}
+.uchips span.offc{color:var(--muted);opacity:.55;text-decoration:line-through}
+/* to-be svg states (extends svg.omp) */
+svg.omp .on.ghost{opacity:.22}
+svg.omp .on.ghost rect{stroke-dasharray:4 4}
+svg.omp .on.blockedN rect{stroke:var(--amber);stroke-dasharray:5 4;fill:color-mix(in srgb,var(--amber) 8%,var(--surface))}
+svg.omp .on.blockedN .t{fill:var(--amber)}
+svg.omp .ar.hid,svg.omp .arlab.hid{display:none}
+svg.omp .on.rep rect{stroke:var(--graphite);stroke-dasharray:3 4;opacity:.75}
+svg.omp .on.rep .t{text-decoration:line-through}
+svg.omp .relayband{stroke:var(--teal);stroke-width:2;fill:color-mix(in srgb,var(--teal) 5%,var(--surface2))}
+svg.omp .relaylab{fill:var(--teal);font:700 12px "IBM Plex Mono",monospace;letter-spacing:.12em}
+</style>
+
+<script>
+/* ---- R4: interactive to-be architecture ---- */
+(function(){
+  var svg=document.getElementById("tobesvg");if(!svg)return;
+  var NS="http://www.w3.org/2000/svg";
+  function el(t,attrs,parent){var e=document.createElementNS(NS,t);for(var k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e}
+  var defs=el("defs",{},svg);
+  var mk=el("marker",{id:"tba",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+  el("path",{d:"M0 0L10 5L0 10z"},mk);
+  var gZ=el("g",{},svg),gA=el("g",{},svg),gN=el("g",{},svg);
+  // capability model
+  var CAPS=[
+    {id:"ledger",n:1,name:"Unified Send Ledger",phase:"wk 2–6"},
+    {id:"policy",n:3,name:"Policy-as-Code Engine",phase:"wk 2–6"},
+    {id:"consent",n:4,name:"Preference & Consent API",phase:"wk 2–6"},
+    {id:"counters",n:2,name:"Counter & Suppression Svc",phase:"wk 6–12",deps:["ledger"]},
+    {id:"gateway",n:5,name:"Send Gateway + Templates",phase:"wk 6–12"},
+    {id:"arb",n:6,name:"Channel Arbitration v1",phase:"mo 4–12",deps:["counters"]},
+    {id:"reg",n:7,name:"Regulatory Notice Pipeline",phase:"mo 4–12",deps:["ledger","gateway"]},
+    {id:"agents",n:8,name:"Agent Surface (MCP/A2A)",phase:"mo 4–12",deps:["gateway","policy"]}
+  ];
+  var PRESETS={asis:[],govern:["ledger","policy","consent"],tenants:["ledger","policy","consent","counters","gateway"],full:CAPS.map(function(c){return c.id})};
+  var USERS=[
+    ["Servicing & Collections",["ledger","counters","policy"]],
+    ["Compliance & Legal",["ledger","policy"]],
+    ["Lifecycle Marketing",["counters","consent","policy"]],
+    ["Product teams",["gateway"]],
+    ["Regulatory ops",["reg"]],
+    ["Borrower Success",["ledger"]],
+    ["Risk",["ledger","counters"]],
+    ["Perf Marketing",["consent","ledger"]],
+    ["Capital & Banking",["policy","ledger"]],
+    ["Analytics",["ledger"]],
+    ["Execs",["ledger"]],
+    ["AI Agents",["agents"]]
+  ];
+  var CHAL=[["C1 no referee",["counters","arb"]],["C2 unproven compliance",["ledger","policy"]],["C3 cross-sell stalled",["counters","consent"]],["C4 launch re-plumbing",["gateway"]],["C5 risky channels",["policy","ledger"]]];
+  var BREAKS={ledger:"no ledger: compliance exams = archaeology · no contact history",counters:"no counters: no cross-tool caps or quiet-hour guarantees",policy:"no policy engine: manual reviews return · VoApps ungated",consent:"no consent API: per-tool consent drift returns",gateway:"no gateway: every new product re-plumbs comms",arb:"no arbitration: each tool self-schedules",reg:"no reg pipeline: notices stay manual & unproven",agents:"no agent surface: teams will wire agents straight into channels"};
+  // ---- static drawing ----
+  function zone(x,y,w,h,label,hue){
+    el("rect",{x:x,y:y,width:w,height:h,rx:12,"class":"oz",style:"fill:color-mix(in srgb,"+hue+" 7%,var(--surface2));stroke:color-mix(in srgb,"+hue+" 38%,var(--line))"},gZ);
+    var t=el("text",{x:x+14,y:y+21,"class":"ozlab",style:"fill:color-mix(in srgb,"+hue+" 70%,var(--ink))"},gZ);t.textContent=label;
+  }
+  zone(30,30,1440,130,"AUTHORING & INVOKERS","#eda100");
+  zone(30,200,310,600,"FEDERATED DATA & GOVERNANCE","#1baf7a");
+  el("rect",{x:370,y:200,width:710,height:600,rx:12,"class":"relayband"},gZ);
+  var rl=el("text",{x:384,y:224,"class":"relaylab"},gZ);rl.textContent="RELAY — THE THIN WAIST (BUILD)";
+  zone(1110,200,360,600,"DELIVERY — FEDERATED & WRAPPED","#e34948");
+  zone(370,830,1100,150,"MEASUREMENT & PROOF","#008300");
+  el("rect",{x:1510,y:30,width:160,height:950,rx:12,"class":"oz",style:"fill:var(--ink);stroke:var(--ink)"},gZ);
+  ["BORROWER","& PARTNERS","","email","SMS","push","in-app","voicemail","agent call","letter"].forEach(function(L,i){
+    var t=el("text",{x:1590,y:100+i*30,"text-anchor":"middle",style:"font:600 12px 'IBM Plex Mono',monospace;fill:"+(i<2?"var(--mint)":"var(--bg)")},gZ);t.textContent=L;
+  });
+  var nodes={};
+  function node(id,x,y,w,h,cls,lines,cap){
+    var g=el("g",{"class":"on "+cls},gN);
+    el("rect",{x:x,y:y,width:w,height:h,rx:cls==="team"?22:8},g);
+    var cy=y+h/2-(lines.length-1)*6.2+3.5;
+    lines.forEach(function(L,i){var t=el("text",{x:x+w/2,y:cy+i*12.4,"text-anchor":"middle","class":i===0?"t":"s"},g);t.textContent=L;});
+    if(cap)g.setAttribute("data-cap",cap);
+    nodes[id]=g;return g;
+  }
+  // invokers
+  node("mkt",60,70,240,58,"team",["Lifecycle Marketing","stays in Braze studios"]);
+  node("prod",330,70,240,58,"team",["Product & Eng teams"]);
+  node("gbot",600,70,240,58,"team",["Servicing & Collections","GBOT · tenant #1"]);
+  node("comp",870,70,240,58,"team",["Compliance & Legal"]);
+  node("agn",1140,70,240,58,"team",["AI Agents","scoped identity"]);
+  // data column
+  node("cdp",50,250,270,66,"own",["★ In-house CDP","+ send-time read API (extend)"]);
+  node("wh",50,344,270,54,"conf",["Databricks · dbt · warehouse"]);
+  node("retl",50,426,270,48,"conf",["Hightouch · Census (as-is)"]);
+  node("ot",50,510,270,48,"conf",["OneTrust — consent SoR"]);
+  node("valx",50,586,270,44,"conf",["Validity · Datadog"]);
+  // relay builds
+  node("l4",400,258,180,66,"own",["4 · Preference &","Consent API"],"consent");
+  node("l3",620,258,180,66,"own",["3 · Policy-as-Code","Engine"],"policy");
+  node("l2",840,258,180,66,"own",["2 · Counter &","Suppression Svc"],"counters");
+  node("l1",510,372,300,78,"own",["1 · UNIFIED SEND LEDGER","every send · immutable ·","queryable"],"ledger");
+  node("l6",840,372,180,66,"own",["6 · Channel","Arbitration v1"],"arb");
+  node("l5",400,486,220,66,"own",["5 · Send Gateway","+ Template Registry"],"gateway");
+  node("l7",650,486,200,66,"own",["7 · Regulatory","Notice Pipeline"],"reg");
+  node("l8",880,486,180,66,"own",["8 · Agent Surface","MCP / A2A"],"agents");
+  // fallback ghosts (visible when cap OFF)
+  function fnode(id,x,y,w,h,lines,offcap){
+    var g=node(id,x,y,w,h,"gap",lines);g.setAttribute("data-off",offcap);return g;
+  }
+  fnode("f1",400,590,300,50,["no unified ledger —","per-tool truth returns"],"ledger");
+  fnode("f3",730,590,320,50,["manual per-campaign reviews","· VoApps ungated"],"policy");
+  fnode("f5",400,668,300,46,["per-team channel integrations"],"gateway");
+  fnode("f7",730,668,320,46,["regulatory gaps persist (B4 red boxes)"],"reg");
+  // delivery
+  node("brz",1130,240,320,54,"conf",["Braze — governed by sync (extend)"]);
+  node("sg",1130,318,320,48,"conf",["SendGrid (wrapped)"]);
+  node("psh",1130,390,320,44,"inf",["In-app / push (extend)"]);
+  node("voa",1130,458,320,44,"conf",["VoApps — behind the gate (extend)"]);
+  node("dia",1130,526,320,44,"inf",["Dialer / CCaaS — validate"]);
+  node("mail",1130,594,320,44,"inf",["Print & mail — BUY (Lob-class)"]);
+  node("sfm",1130,662,150,50,"rep",["SFMC","sunset"]);
+  node("itr",1300,662,150,50,"rep",["Iterable","consolidate?"]);
+  // measurement
+  node("facts",400,878,320,54,"own",["Canonical comms facts (dbt on ledger)"],"ledger");
+  node("look",770,878,280,54,"conf",["Looker · Mode — platform scorecard"]);
+  // ---- edges ----
+  var edges=[];
+  function edge(pts,cls,label,lx,ly,need,off){
+    var d="M"+pts.map(function(p){return p[0]+" "+p[1]}).join(" L ");
+    var p=el("path",{d:d,"class":"ar "+(cls||""),"marker-end":"url(#tba)"},gA);
+    var t=null;
+    if(label){t=el("text",{x:lx,y:ly,"class":"arlab"+(cls==="consent"?" consent":""),"text-anchor":"middle"},gA);t.textContent=label;}
+    edges.push({p:p,t:t,need:need||[],off:off||null});
+  }
+  // always-on federated flows
+  edge([[310,450],[345,450],[345,810],[1090,810],[1090,267],[1130,267]],"batch","audiences (as-is: CDP → rETL → Braze)",700,803,[],null);
+  edge([[180,128],[180,158],[1290,158],[1290,240]],"","builds journeys (as-is)",700,151,[],null);
+  edge([[320,283],[370,283]],"","send-time reads",345,275,[],null);
+  // consent
+  edge([[310,534],[345,534],[345,291],[400,291]],"","",0,0,["consent"],null);
+  edge([[490,258],[490,236],[1085,236],[1085,281],[1130,281]],"","one consent truth at every edge",790,229,["consent"],null);
+  edge([[310,545],[345,545],[345,745],[1090,745],[1090,480],[1130,480]],"consent","consent synced per-tool — drift returns",700,738,[],"consent");
+  // policy
+  edge([[990,128],[990,178],[710,178],[710,258]],"","authors policy once",860,171,["policy"],null);
+  edge([[800,258],[800,246],[1088,246],[1088,330],[1130,330]],"","pre-flight + gate checks",950,239,["policy"],null);
+  edge([[990,128],[990,178],[1097,178],[1097,215]],"manual","manual review per campaign",1010,196,[],"policy");
+  // gateway
+  edge([[450,128],[450,178],[385,178],[385,519],[400,519]],"","teams send via gateway",435,190,["gateway"],null);
+  edge([[720,128],[720,200]],"","servicing sends via gateway",720,180,["gateway"],null);
+  edge([[450,128],[450,170],[1093,170],[1093,342],[1130,342]],"manual","per-team SendGrid integrations return",760,182,[],"gateway");
+  edge([[510,486],[510,466],[1085,466],[1085,414],[1130,414]],"","governed sends → adapters",800,459,["gateway"],null);
+  // ledger
+  edge([[1110,640],[760,640],[760,450]],"","every tool emits send · delivery · engagement",930,633,["ledger"],null);
+  edge([[635,450],[635,878]],"","canonical facts",637,860,["ledger"],null);
+  edge([[720,905],[770,905]],"","",0,0,["ledger"],null);
+  edge([[1110,650],[1094,650],[1094,890],[1050,890]],"manual","per-tool exports return",1094,845,[],"ledger");
+  // counters
+  edge([[700,372],[700,348],[930,348],[930,324]],"","",0,0,["counters"],null);
+  edge([[1020,283],[1082,283],[1082,254],[1130,254]],"","counters & suppressions sync",1055,247,["counters"],null);
+  // arbitration
+  edge([[1020,405],[1130,405]],"","channel & time decisions",1070,398,["arb"],null);
+  // regulatory
+  edge([[750,552],[750,572],[1086,572],[1086,616],[1130,616]],"","generate → deliver → prove",940,565,["reg"],null);
+  // agents
+  edge([[1260,128],[1260,178],[1064,178],[1064,519],[1060,519]],"","MCP / A2A",1130,171,["agents"],null);
+  edge([[970,552],[970,566],[610,566],[610,552]],"","agents send via gateway",800,578,["agents"],null);
+  edge([[1320,128],[1320,200]],"manual","agents wire ad-hoc — unsafe",1320,188,[],"agents");
+  // delivery → borrower
+  edge([[1450,267],[1510,267]],"","",0,0,[],null);
+  edge([[1450,342],[1510,342]],"","",0,0,[],null);
+  edge([[1450,412],[1510,412]],"","",0,0,[],null);
+  edge([[1450,480],[1510,480]],"","",0,0,[],null);
+  edge([[1450,548],[1510,548]],"","",0,0,[],null);
+  edge([[1450,616],[1510,616]],"","",0,0,[],null);
+  // ---- state machine ----
+  var on={};CAPS.forEach(function(c){on[c.id]=true});
+  function effective(id){ // on and all deps effective
+    var c=CAPS.find(function(x){return x.id===id});
+    if(!on[id])return "off";
+    if(c.deps&&c.deps.some(function(d){return effective(d)!=="on"}))return "blocked";
+    return "on";
+  }
+  function render(){
+    var eff={};CAPS.forEach(function(c){eff[c.id]=effective(c.id)});
+    // nodes with data-cap
+    Object.keys(nodes).forEach(function(id){
+      var g=nodes[id],cap=g.getAttribute("data-cap"),offc=g.getAttribute("data-off");
+      g.classList.remove("ghost","blockedN");
+      if(cap){
+        if(eff[cap]==="off")g.classList.add("ghost");
+        else if(eff[cap]==="blocked")g.classList.add("blockedN");
+      }
+      if(offc){ // fallback ghost: visible only when its cap is off
+        var vis=(eff[offc]==="off");
+        g.style.display=vis?"":"none";
+      }
+    });
+    // edges
+    edges.forEach(function(e){
+      var show;
+      if(e.off)show=(eff[e.off]==="off");
+      else show=e.need.every(function(c){return eff[c]==="on"});
+      e.p.classList.toggle("hid",!show);
+      if(e.t)e.t.classList.toggle("hid",!show);
+    });
+    // rail
+    document.querySelectorAll("#trail .trow").forEach(function(r){
+      var id=r.getAttribute("data-cap"),st=eff[id];
+      r.classList.toggle("off",st==="off");
+      r.classList.toggle("blocked",st==="blocked");
+      var em=r.querySelector("em");
+      var c=CAPS.find(function(x){return x.id===id});
+      em.textContent=st==="blocked"?("blocked by: "+c.deps.filter(function(d){return eff[d]!=="on"}).join(", ")):c.phase;
+    });
+    // impact
+    var uOn=0;
+    var uc=document.getElementById("uchips");uc.innerHTML="";
+    USERS.forEach(function(u){
+      var ok=u[1].every(function(c){return eff[c]==="on"});
+      if(ok)uOn++;
+      var s=document.createElement("span");s.className=ok?"on":"offc";s.textContent=u[0];uc.appendChild(s);
+    });
+    var cOn=CHAL.filter(function(ch){return ch[1].every(function(c){return eff[c]==="on"})}).length;
+    document.getElementById("imp-users").textContent=uOn+"/12";
+    document.getElementById("imp-chal").textContent=cOn+"/5";
+    var br=CAPS.filter(function(c){return eff[c.id]!=="on"}).map(function(c){return BREAKS[c.id]});
+    document.getElementById("tbreaks").textContent=br.length?("⚠ "+br.join("  ·  ")):"";
+    // presets pressed state
+    document.querySelectorAll(".pset").forEach(function(b){
+      var set=PRESETS[b.getAttribute("data-p")];
+      var match=CAPS.every(function(c){return (set.indexOf(c.id)>=0)===on[c.id]});
+      b.setAttribute("aria-pressed",match?"true":"false");
+    });
+  }
+  // rail build
+  var rail=document.getElementById("trail");
+  CAPS.forEach(function(c){
+    var b=document.createElement("button");b.className="trow";b.setAttribute("data-cap",c.id);
+    b.innerHTML="<i>"+c.n+"</i><span class='nm'>"+c.name+"<em>"+c.phase+"</em></span><span class='sw'></span>";
+    b.addEventListener("click",function(){on[c.id]=!on[c.id];render();});
+    rail.appendChild(b);
+  });
+  document.querySelectorAll(".pset").forEach(function(b){
+    b.addEventListener("click",function(){
+      var set=PRESETS[b.getAttribute("data-p")];
+      CAPS.forEach(function(c){on[c.id]=set.indexOf(c.id)>=0});
+      render();
+    });
+  });
+  render();
+})();
+</script>
+
+<style>
+.dcard{position:relative}
+.dcard[data-tip]{cursor:help}
+.dcard[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);width:min(360px,86vw);background:var(--ink);color:var(--bg);padding:11px 14px;border-radius:10px;font-size:12.3px;line-height:1.55;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.25);font-weight:400;pointer-events:none;white-space:normal}
+.dcol:last-child .dcard[data-tip]:hover::after{left:auto;right:0}
+:root[data-theme="dark"] .dcard[data-tip]:hover::after{background:var(--surface2);color:var(--ink);border:1px solid var(--line2)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dcard[data-tip]:hover::after{background:var(--surface2);color:var(--ink);border:1px solid var(--line2)}}
+</style>
+
+</body>
+</html>
